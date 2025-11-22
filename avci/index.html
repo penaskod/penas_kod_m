@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Profesyonel Köstebek Avı</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    /* --- GENEL AYARLAR --- */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #4CAF50;
+      /* Çimen Deseni */
+      background-image:
+              linear-gradient(335deg, rgba(0,0,0,0.1) 23px, transparent 23px),
+              linear-gradient(155deg, rgba(0,0,0,0.1) 23px, transparent 23px),
+              linear-gradient(335deg, rgba(0,0,0,0.1) 23px, transparent 23px),
+              linear-gradient(155deg, rgba(0,0,0,0.1) 23px, transparent 23px);
+      background-size: 58px 58px;
+      font-family: 'Press Start 2P', cursive; /* Atari fontu */
+      text-align: center;
+      height: 100vh;
+      overflow: hidden;
+      cursor: none; /* Normal mouse'u gizle */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* --- ÜST BİLGİ PANELİ --- */
+    .bilgi-paneli {
+      display: flex;
+      gap: 40px;
+      margin-top: 20px;
+      z-index: 10;
+    }
+
+    .kutu {
+      background: #fff;
+      border: 4px solid #000;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 5px 5px 0 #000;
+      font-size: 18px;
+      color: #333;
+      min-width: 180px;
+    }
+
+    .kutu span {
+      color: #d32f2f;
+      font-size: 22px;
+    }
+
+    /* --- OYUN ALANI --- */
+    .oyun-sahnesi {
+      width: 800px;
+      height: 450px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    /* --- YUVA VE KÖSTEBEK YAPISI --- */
+    .yuva {
+      flex: 1 0 30%;
+      height: 200px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: -30px;
+    }
+
+    .delik-arka {
+      width: 140px;
+      height: 40px;
+      background: #3e2723;
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    .kostebek {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 100%; /* Başlangıçta gizli */
+      width: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: auto;
+      z-index: 1;
+    }
+
+    .vucut {
+      width: 100%;
+      height: 150px;
+      background: #8d6e63;
+      border-radius: 60px 60px 0 0;
+      position: absolute;
+      bottom: 0;
+      box-shadow: inset -10px 0 10px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: center;
+    }
+
+    .yuz {
+      width: 90px;
+      height: 90px;
+      background-color: #fff;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      top: 20px;
+      border: 3px solid #5d4037;
+    }
+
+    .toprak {
+      width: 100%;
+      height: 60px;
+      background: #795548;
+      position: absolute;
+      bottom: 0;
+      z-index: 2;
+      border-radius: 50%;
+      background-image: radial-gradient(circle at 50% 0, #8d6e63 20%, transparent 20%);
+      background-size: 20px 20px;
+    }
+
+    /* Köstebek Çıkınca */
+    .yuva.up .kostebek {
+      top: 10px;
+    }
+
+    /* --- ÇEKİÇ İMLECİ --- */
+    #ozel-cursor {
+      width: 100px;
+      height: 100px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none; /* Tıklamaya engel olmasın */
+      z-index: 9999;
+      background-image: url('cekic.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      transform-origin: bottom right;
+      transition: transform 0.1s;
+    }
+
+    #ozel-cursor.vuruyor {
+      transform: rotate(-45deg) translateY(10px);
+    }
+
+    /* --- BAŞLAT BUTONU --- */
+    .btn-baslat {
+      background: #d32f2f;
+      color: white;
+      font-family: 'Press Start 2P', cursive;
+      padding: 20px 40px;
+      font-size: 20px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px #b71c1c;
+      z-index: 100;
+      margin-top: 20px;
+    }
+    .btn-baslat:active {
+      top: 6px;
+      box-shadow: 0 0 #b71c1c;
+    }
+
+    /* --- OYUN SONU EKRANI (MODAL) --- */
+    .oyun-sonu-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); /* Koyu arka plan */
+      display: none; /* Başlangıçta gizli */
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      color: white;
+    }
+
+    .modal-icerik {
+      background: #333;
+      border: 4px solid #fff;
+      padding: 40px;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #d32f2f;
+    }
+
+    .modal-icerik h1 {
+      color: #ffeb3b;
+      font-size: 40px;
+      margin-bottom: 30px;
+      text-shadow: 4px 4px #d32f2f;
+    }
+
+    .skor-ozeti {
+      font-size: 20px;
+      line-height: 2;
+      margin-bottom: 30px;
+    }
+
+    .skor-sayisi {
+      color: #4CAF50;
+      font-size: 30px;
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="ozel-cursor"></div>
+
+<h1>EKİBİ YAKALA</h1>
+
+<div class="bilgi-paneli">
+  <div class="kutu">SKOR: <span id="skor">0</span></div>
+  <div class="kutu">SÜRE: <span id="kalan-sure">60</span></div>
+</div>
+
+<div class="oyun-sahnesi">
+  <div class="yuva yuva1"><div class="delik-arka"></div><div class="kostebek"><div class="vucut"></div><div class="yuz"></div></div><div class="toprak"></div></div>
+  <div class="yuva yuva2"><div class="delik-arka"></div><div class="kostebek"><div class="vucut"></div><div class="yuz"></div></div><div class="toprak"></div></div>
+  <div class="yuva yuva3"><div class="delik-arka"></div><div class="kostebek"><div class="vucut"></div><div class="yuz"></div></div><div class="toprak"></div></div>
+  <div class="yuva yuva4"><div class="delik-arka"></div><div class="kostebek"><div class="vucut"></div><div class="yuz"></div></div><div class="toprak"></div></div>
+  <div class="yuva yuva5"><div class="delik-arka"></div><div class="kostebek"><div class="vucut"></div><div class="yuz"></div></div><div class="toprak"></div></div>
+  <div class="yuva yuva6"><div class="delik-arka"></div><div class="kostebek"><div class="vucut"></div><div class="yuz"></div></div><div class="toprak"></div></div>
+</div>
+
+<button id="baslatBtn" class="btn-baslat" onclick="oyunuBaslat()">OYUNU BAŞLAT</button>
+
+<div id="oyunSonuEkrani" class="oyun-sonu-modal">
+  <div class="modal-icerik">
+    <h1>SÜREN DOLDU!</h1>
+    <div class="skor-ozeti">
+      <div>Yaptığın Skor: <span id="finalSkor" class="skor-sayisi">0</span></div>
+      <div>En Yüksek Skor: <span id="enYuksekSkor" class="skor-sayisi">0</span></div>
+    </div>
+    <button class="btn-baslat" onclick="oyunuTekrarBaslat()">TEKRAR OYNA</button>
+  </div>
+</div>
+
+<script>
+  // --- AYARLAR (BURAYI DÜZENLE) ---
+  const fotoListesi = [
+    "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg", "13.jpg"
+  ];
+
+  // --- DEĞİŞKENLER ---
+  const yuvalar = document.querySelectorAll('.yuva');
+  const skorText = document.getElementById('skor');
+  const sureText = document.getElementById('kalan-sure');
+  const kostebekler = document.querySelectorAll('.kostebek');
+  const cursor = document.getElementById('ozel-cursor');
+  const baslatBtn = document.getElementById('baslatBtn');
+  const oyunSonuEkrani = document.getElementById('oyunSonuEkrani');
+  const finalSkorText = document.getElementById('finalSkor');
+  const enYuksekSkorText = document.getElementById('enYuksekSkor');
+
+  let sonYuva;
+  let sureBitti = false;
+  let skor = 0;
+  let kalanSure = 60;
+  let oyunSayaci; // Timer için
+
+  // Tarayıcıdan en yüksek skoru çek (yoksa 0 yap)
+  let enYuksekSkor = localStorage.getItem('kostebeSkoru') || 0;
+
+  // --- MOUSE VE ÇEKİÇ HAREKETİ ---
+  document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.pageX + 'px';
+    cursor.style.top = e.pageY + 'px';
+  });
+  document.addEventListener('mousedown', () => cursor.classList.add('vuruyor'));
+  document.addEventListener('mouseup', () => cursor.classList.remove('vuruyor'));
+
+  // --- OYUN FONKSİYONLARI ---
+
+  function rastgeleSure(min, max) {
+    return Math.round(Math.random() * (max - min) + min);
+  }
+
+  function rastgeleYuva(yuvalar) {
+    const idx = Math.floor(Math.random() * yuvalar.length);
+    const yuva = yuvalar[idx];
+    if (yuva === sonYuva) return rastgeleYuva(yuvalar);
+    sonYuva = yuva;
+    return yuva;
+  }
+
+  function rastgeleFoto() {
+    return fotoListesi[Math.floor(Math.random() * fotoListesi.length)];
+  }
+
+  function kostebekCikar() {
+    if (sureBitti) return;
+
+    const sure = rastgeleSure(600, 1200);
+    const yuva = rastgeleYuva(yuvalar);
+    const kostebek = yuva.querySelector('.kostebek');
+    const yuz = kostebek.querySelector('.yuz');
+
+    yuz.style.backgroundImage = `url('${rastgeleFoto()}')`;
+    yuva.classList.add('up');
+
+    setTimeout(() => {
+      yuva.classList.remove('up');
+      if (!sureBitti) kostebekCikar();
+    }, sure);
+  }
+
+  function geriSayimBaslat() {
+    oyunSayaci = setInterval(() => {
+      kalanSure--;
+      sureText.textContent = kalanSure;
+
+      if (kalanSure <= 0) {
+        clearInterval(oyunSayaci);
+        oyunuBitir();
+      }
+    }, 1000); // Her 1 saniyede bir çalışır
+  }
+
+  function oyunuBaslat() {
+    // Değişkenleri sıfırla
+    skor = 0;
+    kalanSure = 60; // Süreyi buradan değiştirebilirsin
+    sureBitti = false;
+
+    skorText.textContent = 0;
+    sureText.textContent = kalanSure;
+
+    // Butonu gizle
+    baslatBtn.style.display = 'none';
+
+    kostebekCikar();
+    geriSayimBaslat();
+  }
+
+  function oyunuBitir() {
+    sureBitti = true;
+
+    // En yüksek skor kontrolü
+    if (skor > enYuksekSkor) {
+      enYuksekSkor = skor;
+      // Skoru tarayıcı hafızasına kaydet
+      localStorage.setItem('kostebeSkoru', enYuksekSkor);
+    }
+
+    // Bitiş ekranını güncelle
+    finalSkorText.textContent = skor;
+    enYuksekSkorText.textContent = enYuksekSkor;
+
+    // Ekranı göster
+    oyunSonuEkrani.style.display = 'flex';
+  }
+
+  function oyunuTekrarBaslat() {
+    oyunSonuEkrani.style.display = 'none';
+    oyunuBaslat();
+  }
+
+  function vur(e) {
+    if(!e.isTrusted) return;
+    if(!this.parentNode.classList.contains('up')) return;
+
+    skor++;
+    this.parentNode.classList.remove('up');
+    skorText.textContent = skor;
+  }
+
+  kostebekler.forEach(k => k.addEventListener('mousedown', vur));
+
+</script>
+</body>
+</html>
