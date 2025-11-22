@@ -3,189 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Benim Oyun Dünyam</title>
+    <title>Barış'ın Oyun Dünyası</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* GENEL SAYFA AYARLARI */
         body {
             margin: 0;
-            background-color: #121212;
+            padding: 0;
+            background-color: #0f0f1a; /* Koyu lacivert-siyah */
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            background-image: radial-gradient(circle, #2a2a2a 1px, transparent 1px);
-            background-size: 30px 30px;
+            font-family: 'Poppins', sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 128, 0.1) 0%, transparent 20%);
         }
 
+        /* BAŞLIK ALANI */
         header {
-            padding: 50px 20px;
-            background: linear-gradient(90deg, #ff00cc, #333399);
-            box-shadow: 0 0 30px rgba(255, 0, 204, 0.4);
-            margin-bottom: 40px;
+            text-align: center;
+            padding: 60px 20px 40px;
         }
 
         h1 {
             margin: 0;
-            font-size: 3rem;
+            font-size: 2.5rem;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 4px 4px 0px #000;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #00f2ff, #ff0099);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
         }
 
+        p.sub-text {
+            color: #a0a0b0;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* KARTLARIN DURDUĞU ALAN (Izgara) */
         .container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 30px;
+            gap: 25px;
             padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
-            flex: 1; /* Footer'ı aşağı itmek için */
+            flex: 1;
         }
 
-        .oyun-karti {
-            background: #1e1e1e;
-            border: 2px solid #333;
+        /* OYUN KARTI TASARIMI */
+        .card {
+            background: #1a1a2e;
+            border: 1px solid #2a2a40;
             border-radius: 20px;
-            width: 300px;
+            width: 320px;
             overflow: hidden;
-            transition: all 0.3s ease;
             text-decoration: none;
             color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
             position: relative;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
         }
 
-        .oyun-karti:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: #fff;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: #444466;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .kart-resim {
-            height: 160px;
+        /* Kartın Üstündeki Renkli Resim Alanı */
+        .card-img {
+            height: 150px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 70px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 60px;
         }
 
-        .kart-bilgi {
-            padding: 25px;
+        .card-content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        h2 { margin: 0 0 10px 0; color: #fff; font-size: 1.5rem; }
-        p { font-size: 0.95rem; color: #bbb; margin: 0; line-height: 1.4; }
+        .card h2 {
+            margin: 0 0 10px;
+            font-size: 1.4rem;
+        }
 
-        .etiket {
+        .card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #bbb;
+            line-height: 1.5;
+        }
+
+        /* Oyna Butonu Görünümü */
+        .play-btn {
+            margin-top: 15px;
+            display: inline-block;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .play-btn::after {
+            content: ' →';
+        }
+
+        /* ETİKETLER (Sağ üst köşe) */
+        .tag {
             position: absolute;
             top: 15px;
             right: 15px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
             font-weight: bold;
             text-transform: uppercase;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
         }
 
+        /* FOOTER */
         footer {
+            text-align: center;
             padding: 30px;
             color: #555;
-            font-size: 0.9rem;
-            background: #0a0a0a;
-            margin-top: 50px;
+            font-size: 0.8rem;
+            margin-top: 40px;
         }
 
-        /* Mobil uyumu */
+        /* MOBİL UYUM */
         @media (max-width: 600px) {
             h1 { font-size: 2rem; }
-            .oyun-karti { width: 100%; max-width: 350px; }
-            .container { padding: 10px; }
+            .card { width: 100%; }
         }
+
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🎮 OYUN MERKEZİ</h1>
-        <p style="margin-top: 10px; opacity: 0.9; font-size: 1.1rem;">Tüm eğlence, aksiyon ve sanat tek linkte!</p>
+        <h1>OYUN MERKEZİ</h1>
+        <p class="sub-text">Eğlence, Gizem ve Aksiyon Tek Linkte</p>
     </header>
 
     <div class="container">
 
-        <a href="kahin/index.html" class="oyun-karti">
-            <div class="etiket" style="background: #9b59b6;">Komik</div>
-            <div class="kart-resim" style="background: linear-gradient(135deg, #4b6cb7, #182848);">
+        <a href="kahin/index.html" class="card">
+            <div class="card-img" style="background: linear-gradient(135deg, #667eea, #764ba2);">
                 🔮
             </div>
-            <div class="kart-bilgi">
-                <h2 style="color: #a29bfe;">Mistik Kahin</h2>
-                <p>Aklındaki soruyu sor, Yüce Kahin sana (troll) cevabını versin.</p>
+            <div class="tag" style="color: #e0c3fc;">Troll</div>
+            <div class="card-content">
+                <h2>Mistik Kahin</h2>
+                <p>Aklından bir soru tut, Yüce Kahin sana (biraz sinir bozucu) cevabını versin.</p>
+                <span class="play-btn" style="color: #c4b5fd;">Geleceği Gör</span>
             </div>
         </a>
 
-        <a href="avci/index.html" class="oyun-karti">
-            <div class="etiket" style="background: #e74c3c;">Aksiyon</div>
-            <div class="kart-resim" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+        <a href="avci/index.html" class="card">
+            <div class="card-img" style="background: linear-gradient(135deg, #ff9a9e, #fecfef);">
                 🔨
             </div>
-            <div class="kart-bilgi">
-                <h2 style="color: #2ecc71;">Ekibi Yakala!</h2>
-                <p>Arkadaşların delikten fırlıyor! Süre bitmeden hepsini yakala.</p>
+            <div class="tag" style="color: #ff9a9e;">Aksiyon</div>
+            <div class="card-content">
+                <h2>Ekibi Yakala</h2>
+                <p>Arkadaşların deliklerden fırlıyor! Süre bitmeden hepsini çekiçle yakala.</p>
+                <span class="play-btn" style="color: #fda4af;">Avı Başlat</span>
             </div>
         </a>
 
-        <a href="yilan/index.html" class="oyun-karti">
-            <div class="etiket" style="background: #f1c40f; color: black;">Klasik</div>
-            <div class="kart-resim" style="background: linear-gradient(135deg, #000000, #0f9b0f);">
+        <a href="yilan/index.html" class="card">
+            <div class="card-img" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
                 🐍
             </div>
-            <div class="kart-bilgi">
-                <h2 style="color: #f1c40f;">Neon Yılan</h2>
-                <p>Duvarlardan geçebilirsin ama kuyruğuna dikkat et! Neon ışıklı klasik.</p>
+            <div class="tag" style="color: #86efac;">Klasik</div>
+            <div class="card-content">
+                <h2>Neon Yılan</h2>
+                <p>Modernize edilmiş klasik yılan oyunu. Duvarlardan geçebilirsin ama kendine çarpma!</p>
+                <span class="play-btn" style="color: #4ade80;">Oyna</span>
             </div>
         </a>
 
-        <a href="karanlik/index.html" class="oyun-karti">
-            <div class="etiket" style="background: #34495e;">Korku</div>
-            <div class="kart-resim" style="background: #000;">
+        <a href="karanlik/index.html" class="card">
+            <div class="card-img" style="background: radial-gradient(circle, #333, #000);">
                 🔦
             </div>
-            <div class="kart-bilgi">
-                <h2 style="color: #bdc3c7;">Karanlık Oda</h2>
-                <p>Burada kimse yok... mu? Işığını aç ve gizli mesajları bul.</p>
+            <div class="tag" style="color: #cbd5e1;">Korku</div>
+            <div class="card-content">
+                <h2>Karanlık Oda</h2>
+                <p>Burada hiçbir şey görünmüyor. Fenerini kullan ve gizli mesajları bul. Sesi aç.</p>
+                <span class="play-btn" style="color: #94a3b8;">Giriş Yap</span>
             </div>
         </a>
 
-        <a href="kapsul/index.html" class="oyun-karti">
-            <div class="etiket" style="background: #00f3ff; color: black;">Gizem</div>
-            <div class="kart-resim" style="background: linear-gradient(135deg, #000428, #004e92);">
+        <a href="kapsul/index.html" class="card">
+            <div class="card-img" style="background: linear-gradient(135deg, #00c6ff, #0072ff);">
                 ⏳
             </div>
-            <div class="kart-bilgi">
-                <h2 style="color: #00f3ff;">Zaman Kapsülü</h2>
-                <p>Bir mesaj yaz ve kilitle. Süre dolana kadar kimse okuyamaz.</p>
+            <div class="tag" style="color: #93c5fd;">Gizem</div>
+            <div class="card-content">
+                <h2>Zaman Kapsülü</h2>
+                <p>Geleceğe bir not bırak ve kilitle. 1 saat, 24 saat veya 1 yıl boyunca kimse açamaz.</p>
+                <span class="play-btn" style="color: #60a5fa;">Kapsülü Aç</span>
             </div>
         </a>
 
-        <a href="kum/index.html" class="oyun-karti">
-            <div class="etiket" style="background: #ff0055;">Sanat</div>
-            <div class="kart-resim" style="background: linear-gradient(135deg, #232526, #414345);">
+        <a href="kum/index.html" class="card">
+            <div class="card-img" style="background: linear-gradient(135deg, #ff0844, #ffb199);">
                 ✨
             </div>
-            <div class="kart-bilgi">
-                <h2 style="color: #ff0055;">Dijital Kum</h2>
-                <p>Rengarenk kumlarla oyna, yerçekimini izle. Tamamen rahatlatıcı.</p>
+            <div class="tag" style="color: #fca5a5;">Sanat</div>
+            <div class="card-content">
+                <h2>Dijital Kum</h2>
+                <p>Rengarenk kumlarla oyna. Yerçekimi ve fizik kurallarıyla sanat yap. Stres at.</p>
+                <span class="play-btn" style="color: #f87171;">Sanat Yap</span>
             </div>
         </a>
 
     </div>
 
     <footer>
-        <p>Bu site arkadaşlar için özel yapılmıştır. 😎 | İyi Eğlenceler!</p>
+        <p>2025 | Arkadaşlara Özel Yapılmıştır 👾</p>
     </footer>
 
 </body>
