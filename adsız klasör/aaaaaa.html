@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benim Oyun Dünyam</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #121212;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      background-image: radial-gradient(circle, #2a2a2a 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+
+    header {
+      padding: 40px 20px;
+      background: linear-gradient(90deg, #ff00cc, #333399);
+      box-shadow: 0 0 20px rgba(255, 0, 204, 0.5);
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 3px 3px 0px #000;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .oyun-karti {
+      background: #1e1e1e;
+      border: 2px solid #333;
+      border-radius: 15px;
+      width: 300px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      text-decoration: none; /* Link çizgisini kaldır */
+      color: white;
+      position: relative;
+    }
+
+    .oyun-karti:hover {
+      transform: translateY(-10px);
+      border-color: #00ffcc;
+      box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
+    }
+
+    .kart-resim {
+      height: 150px;
+      background-color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+    }
+
+    .kart-bilgi {
+      padding: 20px;
+    }
+
+    h2 { margin: 0 0 10px 0; color: #00ffcc; }
+    p { font-size: 0.9rem; color: #bbb; margin: 0; }
+
+    .etiket {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff0055;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    /* Mobil uyumu */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.8rem; }
+      .oyun-karti { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🎮 OYUN MERKEZİ</h1>
+  <p style="margin-top: 10px; opacity: 0.8;">Tüm eğlence tek linkte!</p>
+</header>
+
+<div class="container">
+
+  <a href="kahin/index.html" class="oyun-karti">
+    <div class="etiket">Komik</div>
+    <div class="kart-resim" style="background: linear-gradient(45deg, #4b6cb7, #182848);">
+      🔮
+    </div>
+    <div class="kart-bilgi">
+      <h2>Mistik Kahin</h2>
+      <p>Aklındaki soruyu sor, Yüce Kahin sana (troll) cevabını versin.</p>
+    </div>
+  </a>
+
+  <a href="avci/index.html" class="oyun-karti">
+    <div class="etiket">Aksiyon</div>
+    <div class="kart-resim" style="background: linear-gradient(45deg, #11998e, #38ef7d);">
+      🔨
+    </div>
+    <div class="kart-bilgi">
+      <h2>Ekibi Yakala!</h2>
+      <p>Arkadaşların delikten fırlıyor! Süre bitmeden hepsini yakala.</p>
+    </div>
+  </a>
+
+</div>
+
+<footer style="margin-top: 50px; padding: 20px; color: #555;">
+  <p>Bu site arkadaşlar için özel yapılmıştır. 😎</p>
+</footer>
+
+</body>
+</html>
