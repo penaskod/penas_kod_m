@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mistik Kahin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      /* Gizemli Mor-Siyah Geçişli Arka Plan */
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      color: white;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .card {
+      background-color: rgba(0, 0, 0, 0.6); /* Yarı saydam siyah */
+      border: 2px solid #9b59b6;
+      box-shadow: 0 0 30px rgba(155, 89, 182, 0.5); /* Mor parıltı */
+    }
+
+    /* Kahin Resmi Efekti */
+    .kure-resmi {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #b86eff;
+      box-shadow: 0 0 20px #fff, 0 0 40px #ff00de; /* Büyülü parlama */
+      animation: süzülme 3s infinite ease-in-out;
+    }
+
+    @keyframes süzülme {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+
+    #cevap-metni {
+      text-shadow: 0 0 10px yellow;
+      min-height: 30px;
+    }
+
+    .btn-mistik {
+      background: linear-gradient(45deg, #6a11cb, #2575fc);
+      border: none;
+      transition: transform 0.2s;
+    }
+    .btn-mistik:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+
+<audio id="mistik-muzik" loop>
+  <source src="muzik.mp3" type="audio/mpeg">
+</audio>
+
+<div class="card text-center p-4 rounded-4" style="width: 24rem;">
+  <div class="card-body">
+
+    <div class="mb-4">
+      <img src="kahin.webp" alt="Yüce Kahin" class="kure-resmi">
+    </div>
+
+    <h2 class="card-title mb-3 text-warning">✨ YÜCE KAHİN ✨</h2>
+
+    <p class="mb-4 text-white fw-bold" style="font-size: 1.1rem; text-shadow: 2px 2px 4px black;">
+      Sorunu zihninde canlandır ve cevabı öğrenmek için butona bas...
+    </p>
+
+    <button onclick="gelecegiGor()" class="btn btn-lg w-100 fw-bold text-white btn-mistik">
+      🔮 GELECEĞİ GÖSTER
+    </button>
+
+    <div class="mt-4 p-2">
+      <h4 id="cevap-metni" class="text-warning fw-bold"></h4>
+    </div>
+  </div>
+</div>
+
+<script>
+  const cevaplar = [
+    "Sana kehanet yok anca finger snap",
+    "Kanka ağlama ama mlsf",
+    "Yıldızlar diyor ki: siktr git",
+    "Şu an 'he' deyip geçiyorum sana",
+    "Ne evetciyiz ne hayırcı ortacıyız ortacı",
+    "Üzgünüm, beni sevmediğiniz için sorunuza cevap veremiyorum :(",
+    "Sen olsun istiyorsan oldurturuz reis raat kal"
+  ];
+
+  function gelecegiGor() {
+    var muzik = document.getElementById("mistik-muzik");
+    if(muzik) {
+      muzik.volume = 0.3;
+      muzik.play().catch(e => console.log("Müzik için tıklama bekleniyor"));
+    }
+
+    const rastgeleSayi = Math.floor(Math.random() * cevaplar.length);
+    const secilenCevap = cevaplar[rastgeleSayi];
+    const cevapKutusu = document.getElementById("cevap-metni");
+
+    cevapKutusu.innerHTML = "Ruhlar toplanıyor...";
+    cevapKutusu.style.opacity = "0.5";
+
+    setTimeout(function() {
+      cevapKutusu.innerHTML = secilenCevap;
+      cevapKutusu.style.opacity = "1";
+    }, 1500);
+  }
+</script>
+
+</body>
+</html>
