@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIZIL DAVA: 1980 - Çözülemeyen Cinayet</title>
+  <style>
+    :root {
+      --bg-color: #1a1a1a;
+      --desk-color: #3e2723;
+      --paper-color: #f5f5dc;
+      --paper-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      --ink-color: #2c3e50;
+      --blood-color: #8a0303;
+      --accent-color: #d35400;
+    }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: var(--bg-color);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--ink-color);
+      overflow: hidden; /* Masa hissi için */
+    }
+
+    /* --- OYUN ALANI (MASA) --- */
+    #game-desk {
+      width: 100%;
+      max-width: 1200px;
+      height: 95vh;
+      background: radial-gradient(circle, #5d4037 0%, #3e2723 100%);
+      border: 15px solid #281815;
+      box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .desk-title {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      color: rgba(255,255,255,0.2);
+      font-size: 2rem;
+      font-weight: bold;
+      pointer-events: none;
+      transform: rotate(-2deg);
+    }
+
+    /* --- NESNELER (FILES) --- */
+    .item {
+      position: absolute;
+      background-color: var(--paper-color);
+      padding: 15px;
+      box-shadow: var(--paper-shadow);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid #ccc;
+    }
+
+    .item:hover {
+      transform: scale(1.05) rotate(0deg) !important;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+      z-index: 100;
+    }
+
+    /* Gazete */
+    #newspaper {
+      top: 10%;
+      left: 10%;
+      width: 250px;
+      height: 300px;
+      transform: rotate(-5deg);
+      background: #e8e8e8;
+    }
+    #newspaper h3 { font-family: 'Times New Roman', serif; text-align: center; border-bottom: 2px solid black; margin-top: 0;}
+
+    /* Otopsi Dosyası */
+    #autopsy-folder {
+      top: 15%;
+      right: 15%;
+      width: 220px;
+      height: 280px;
+      background-color: #d7ccc8;
+      transform: rotate(3deg);
+      border-left: 10px solid #8d6e63;
+    }
+    #autopsy-folder::after { content: "CONFIDENTIAL"; color: darkred; border: 2px solid darkred; padding: 5px; position: absolute; bottom: 20px; right: 20px; transform: rotate(-15deg); opacity: 0.6;}
+
+    /* Şüpheli Fotoğrafları (Polaroid Tarzı) */
+    .polaroid {
+      width: 120px;
+      height: 140px;
+      background: white;
+      padding: 10px 10px 30px 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      text-align: center;
+      font-size: 0.8rem;
+      transform: rotate(var(--rot));
+    }
+    .polaroid img { width: 100%; height: 100px; background: #ddd; object-fit: cover; filter: grayscale(100%) sepia(20%); }
+
+    /* Kilitli Sandık */
+    #chest {
+      bottom: 50px;
+      right: 50px;
+      width: 180px;
+      height: 120px;
+      background: #2c1e19;
+      border: 2px solid #a1887f;
+      color: #d7ccc8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      transform: rotate(-2deg);
+    }
+
+    /* Not Defteri */
+    #notebook {
+      bottom: 40px;
+      left: 60px;
+      width: 200px;
+      height: 250px;
+      background: #fff9c4;
+      background-image: linear-gradient(#999 1px, transparent 1px);
+      background-size: 100% 1.5em;
+      transform: rotate(4deg);
+      padding: 20px;
+      font-size: 0.9rem;
+    }
+
+    /* --- MODAL (POP-UP EKRANLAR) --- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--paper-color);
+      width: 80%;
+      max-width: 800px;
+      max-height: 90vh;
+      padding: 40px;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 0 50px rgba(0,0,0,0.9);
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #8a0303;
+      font-weight: bold;
+    }
+
+    h2 { border-bottom: 2px solid var(--ink-color); padding-bottom: 10px; margin-top: 0; text-transform: uppercase;}
+
+    .evidence-text { white-space: pre-wrap; }
+
+    .suspect-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .suspect-card {
+      border: 1px solid #999;
+      padding: 10px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .suspect-card:hover { background: #eee; }
+
+    /* Şifre Ekranı */
+    .lock-interface {
+      text-align: center;
+      padding: 50px;
+      background: #222;
+      color: #eee;
+      border: 5px solid #444;
+    }
+    .lock-input {
+      font-size: 2rem;
+      padding: 10px;
+      width: 150px;
+      text-align: center;
+      letter-spacing: 10px;
+      margin: 20px 0;
+      background: #000;
+      color: #0f0;
+      border: 1px solid #333;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .btn {
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      background: #444;
+      color: white;
+      border: none;
+    }
+    .btn:hover { background: #666; }
+
+    .clue-highlight { color: #d35400; font-weight: bold; }
+
+  </style>
+</head>
+<body>
+
+<div id="game-desk">
+  <div class="desk-title">VAKA NO: 1980/21 - MAHMUT CAN ÖZ</div>
+
+  <div id="newspaper" class="item" onclick="openModal('newsModal')">
+    <h3>ADANA YEREL</h3>
+    <div style="font-size: 0.7rem; text-align: center;">21 Ekim 1980</div>
+    <h4 style="text-align: center; color: var(--blood-color);">KUYUBAŞI'NDA DEHŞET!</h4>
+    <p style="font-size: 0.6rem;">Mahmut Can Öz ormanlık alanda ölü bulundu. Köy halkı tedirgin...</p>
+  </div>
+
+  <div id="autopsy-folder" class="item" onclick="openModal('autopsyModal')">
+    <h3 style="text-align: center;">ADLİ TIP RAPORU</h3>
+    <p style="font-size: 0.8rem;">Dr. Yusuf Kılıç</p>
+    <p style="font-size: 0.8rem;">Kurban: M. Can Öz</p>
+    <div style="margin-top: 50px; text-align: center; color: darkred; border: 2px solid darkred; transform: rotate(-10deg);">ÖLÜM SEBEBİ:<br>BIÇAKLANMA</div>
+  </div>
+
+  <div class="item" style="top: 50%; left: 40%; width: 200px; height: 150px; background: #90a4ae; transform: rotate(5deg);" onclick="openModal('suspectsModal')">
+    <h3 style="text-align: center; color: white;">ŞÜPHELİ İFADELERİ</h3>
+    <div style="text-align: center; color: white;">Dosya No: #5</div>
+  </div>
+
+  <div class="item" style="top: 10%; right: 40%; width: 120px; height: 100px; background: #ffecb3; transform: rotate(-15deg);" onclick="openModal('noteModal')">
+    <p style="font-family: cursive; font-size: 0.8rem;">Sevgili Yanmış...</p>
+    <p style="font-weight: bold; font-size: 1rem;">5 15 18 16...</p>
+  </div>
+
+  <div id="notebook" class="item">
+    <u>DEDEKTİFİN NOTLARI:</u>
+    <ul style="padding-left: 20px; font-size: 0.8rem;">
+      <li>Ölüm saati gece yarısı civarı.</li>
+      <li>Volkan bıçağını kaybetmiş.</li>
+      <li>Oğuzhan "Saat durdu" dedi... Kaçta?</li>
+      <li>Sandık için 4 haneli bir şifre lazım.</li>
+    </ul>
+  </div>
+
+  <div id="chest" class="item" onclick="openModal('lockModal')">
+    <div>[ KİLİTLİ SANDIK ]</div>
+  </div>
+
+  <div class="item polaroid" style="top: 60%; left: 10%; --rot: -10deg;">
+    <div style="background: #333; height: 80px; width: 100%;"></div>
+    <p>Volkan (Avcı)</p>
+  </div>
+  <div class="item polaroid" style="top: 65%; left: 20%; --rot: 5deg;">
+    <div style="background: #555; height: 80px; width: 100%;"></div>
+    <p>Arif (Muhtar)</p>
+  </div>
+</div>
+
+<div id="newsModal" class="modal-overlay">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('newsModal')">&times;</span>
+    <h2>ADANA YEREL GAZETESİ - 21 EKİM 1980</h2>
+    <div class="evidence-text">
+      MANŞET: KUYUBAŞINDA DEHŞET BİR CİNAYET İŞLENDİ
+
+      Kuyubaşı köyü, geçtiğimiz gece yaşanan trajik bir olayla sarsıldı. Köye yeni taşınan ve fikirleriyle hem destekçi hem eleştirmen toplayan **Mahmut Can Öz**, ormanlık alanda ölü bulundu.
+
+      Jandarma olayla ilgili soruşturma başlattı. Komiser Doğuş Özçalışkan: "Her ihtimali değerlendiriyoruz," dedi.
+
+      Köy muhtarı Arif Öcal, köy sakinlerini sakin olmaya çağırdı. Mahmut Can Öz, köydeki geleneklere karşı tutumuyla biliniyordu.
+    </div>
+  </div>
+</div>
+
+<div id="autopsyModal" class="modal-overlay">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('autopsyModal')">&times;</span>
+    <h2>ADLİ TIP RAPORU - PROTOKOL NO: 5#</h2>
+    <div class="evidence-text">
+      **Kurban:** Mahmut Can Öz
+      **Yaş:** 31
+      **Tarih:** 23 Ekim 1980
+      **Patolog:** Dr. Yusuf Kılıç
+
+      **BULGULAR:**
+      1. **Toksikoloji:** Düşük miktarda alkol (%0.02). Zehir tespit edilmedi.
+      2. **Yaralar:** - Baş Yaralanması: Sol temporal bölgede düşmeye bağlı yara.
+      - Göğüs Yaralanmaları: Göğüs kafesi sol tarafında iki adet DERİN BIÇAK YARASI.
+      3. **Ölüm Nedeni:** Akut kan kaybı ve kalp yaralanması.
+      4. **Olay Yeri Yorumu:** Kurban savunmasız yakalanmış. Savunma yarası yok. Önce kafasına darbe almış, yere düşünce bıçaklanmış olabilir.
+
+      **NOT:** Saldırı "kişisel" bir nitelik taşıyor. Yakın mesafeden yapılmış.
+    </div>
+  </div>
+</div>
+
+<div id="suspectsModal" class="modal-overlay">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('suspectsModal')">&times;</span>
+    <h2>ŞÜPHELİ SORGU TUTANAKLARI</h2>
+    <p>Dedektif Mehmet Göksun'un notları:</p>
+
+    <div class="suspect-grid">
+      <div class="suspect-card" onclick="alert('DOLUNAY KARAKELLE (Bakkal): \n\'Mahmut ile tartıştık ama ben onu öldürmedim. Gece dükkanı kapatıp evime gittim. Ailem şahidimdir.\'')">
+        <strong>1. Dolunay KARAKELLE</strong><br>
+        (Bakkal, 42 Yaş)<br>
+        <i>Durumu: Şüpheli hareketler, maktül ile tartışmalı.</i>
+      </div>
+
+      <div class="suspect-card" onclick="alert('FURKAN ÖZDİL (İmam): \n\'O adam Allahsızdı, köylü sevmezdi. Ama ben gece camideydim, ibadet ediyordum. Dışarı çıkmadım. Volkan denen avcıdan şüpheleniyorum.\'')">
+        <strong>2. Furkan ÖZDİL</strong><br>
+        (İmam, 61 Yaş)<br>
+        <i>Durumu: Maktülün fikirlerinden nefret ediyor.</i>
+      </div>
+
+      <div class="suspect-card" onclick="alert('ARIF ÖCAL (Muhtar): \n\'Toplantıdaydım. Mahmut ile tartıştık, o erken çıktı. Ben toplantı bitince evime gittim. Kimseyi öldürmedim.\'')">
+        <strong>3. Arif ÖCAL</strong><br>
+        (Muhtar, 52 Yaş)<br>
+        <i>Durumu: Sağ el yüzük parmağı kopuk. Politik husumet.</i>
+      </div>
+
+      <div class="suspect-card" onclick="alert('VOLKAN KIVANÇ (Avcı): \n\'Gece ormanda avdaydım. Mahmut\'u görmedim. Ama... Av bıçağımı bulamıyorum, kayboldu. Biri çalmış olabilir.\'')">
+        <strong>4. Volkan KIVANÇ</strong><br>
+        (Avcı, 41 Yaş)<br>
+        <i>Durumu: Cinayet silahı (bıçak) kayıp.</i>
+      </div>
+
+      <div class="suspect-card" style="background-color: #ffebee;" onclick="alert('OĞUZHAN AVGAN (Deli): \n\'Yıldızlar konuştu... Mahmut uyuyordu sandım ama kan vardı. Saat durmuştu! Zamanı geri alamadım... Saat tam 00:12\'de durdu!\'')">
+        <strong>5. Oğuzhan AVGAN</strong><br>
+        (Akli Dengesi Bozuk)<br>
+        <i>Durumu: Olayın tek görgü tanığı olabilir.</i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="noteModal" class="modal-overlay">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal('noteModal')">&times;</span>
+    <h2>YANIK MEKTUP PARÇASI</h2>
+    <div class="evidence-text" style="font-family: 'Brush Script MT', cursive; font-size: 1.5rem;">
+      "Sevgili YANMIŞ...
+      Köyde gerçekler konuşulmuyor. Köyün potansiyelini ortaya çıkarmak için... Acele ediyorum, takip ediliyorum.
+      Sana bu mektubu verip gitmem lazım."
+
+      - Mahmut Can
+    </div>
+    <hr>
+    <p>Kağıdın arkasında anlamsız sayılar var:</p>
+    <h1>5  15  18  16</h1>
+    <p style="font-size: 0.8rem; color: #555;">(Dedektif Notu: Bu sayılar alfabedeki harfleri mi temsil ediyor? Yoksa başka bir şey mi?)</p>
+  </div>
+</div>
+
+<div id="lockModal" class="modal-overlay">
+  <div class="modal-content lock-interface">
+    <span class="close-btn" style="color:white;" onclick="closeModal('lockModal')">&times;</span>
+    <h2 style="color: #d35400;">SANDIK ŞİFRESİ</h2>
+    <p>Mahmut'un sakladığı itirafı görmek için 4 haneli şifreyi gir.</p>
+    <p style="font-size: 0.8rem; color: #777;">İPUCU: Olay yerindeki durmuş saat kaçı gösteriyordu?</p>
+
+    <input type="text" id="passcodeInput" class="lock-input" maxlength="4" placeholder="____">
+    <br>
+    <button class="btn" onclick="checkCode()">KİLİDİ AÇ</button>
+    <div id="error-msg" style="color: red; margin-top: 10px; display: none;">HATALI ŞİFRE</div>
+  </div>
+</div>
+
+<div id="finalModal" class="modal-overlay">
+  <div class="modal-content" style="border: 5px solid green;">
+    <span class="close-btn" onclick="closeModal('finalModal')">&times;</span>
+    <h1 style="color: green; text-align: center;">VAKA ÇÖZÜLDÜ</h1>
+    <div class="evidence-text">
+      SANDIK AÇILDI...
+      İçinden Muhtar Arif Öcal'a ait kanlı bir gömlek ve Volkan'ın kayıp av bıçağı çıktı.
+
+      **GERÇEK:**
+      Muhtar Arif, Mahmut'un köydeki düzeni değiştirmesinden korkuyordu. Toplantıdan sonra Mahmut'u takip etti. Ormanda karşılaştıklarında, daha önce Volkan'ın kulübesinden çaldığı bıçağı kullandı.
+
+      Deli Oğuzhan olayı gördü ama kimse ona inanmadı. Durmuş saat (00:12) cinayetin tam işlendiği andı.
+
+      **TEBRİKLER DEDEKTİF!**
+      Adaleti sağladın.
+    </div>
+    <button class="btn" style="background: green; width: 100%; margin-top: 20px;" onclick="location.reload()">YENİ OYUN</button>
+  </div>
+</div>
+
+<script>
+  // Modal Açma Fonksiyonu
+  function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+  }
+
+  // Modal Kapatma Fonksiyonu
+  function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+    // Şifre ekranını sıfırla
+    document.getElementById('error-msg').style.display = 'none';
+    document.getElementById('passcodeInput').value = '';
+  }
+
+  // Şifre Kontrol Mantığı
+  function checkCode() {
+    const input = document.getElementById('passcodeInput').value;
+    const errorMsg = document.getElementById('error-msg');
+
+    // ŞİFRE: Oğuzhan'ın ifadesindeki durmuş saat (0012)
+    // PDF'teki sayılar (5 15 18 16) kafa karıştırmaca olarak kullanılabilir,
+    // ama asıl kilit "zaman"dır.
+    if (input === "0012") {
+      closeModal('lockModal');
+      openModal('finalModal');
+    } else {
+      errorMsg.style.display = 'block';
+      // Hatalı girişte efekt
+      const lockInterface = document.querySelector('.lock-interface');
+      lockInterface.style.borderColor = 'red';
+      setTimeout(() => {
+        lockInterface.style.borderColor = '#444';
+      }, 500);
+    }
+  }
+</script>
+</body>
+</html>
