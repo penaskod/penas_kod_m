@@ -487,8 +487,8 @@
   let gameRunning = false;
   let selectedMusic = 'manifest';
 
-  // Müzik Listesi
-  const musicList = ["manifest", "snap", "rüya", "KTS", "zamansızdık", "arıyo", "zehir"];
+  // Müzik Listesi (GÜNCELLENDİ)
+  const musicList = ["manifest", "snap"];
 
   // Karakter Veritabanı
   const characters = {
@@ -846,7 +846,8 @@
     document.getElementById('hud').classList.remove('hidden');
 
     const audioPlayer = document.getElementById('bg-music');
-    audioPlayer.src = `./assets/music/${selectedMusic}.mp3`;
+    // MÜZİK DOSYA YOLU GÜNCELLENDİ (assets/music/ yerine assets/)
+    audioPlayer.src = `./assets/${selectedMusic}.mp3`;
     audioPlayer.volume = 0.4;
     audioPlayer.play().catch(e => console.log("Müzik hatası: ", e));
 
