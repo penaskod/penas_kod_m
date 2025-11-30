@@ -450,7 +450,7 @@
       <div class="ability-indicator" id="p1-ability-status">Yetenek Hazır</div>
     </div>
 
-    <div class="timer" id="timer">60</div>
+    <div class="timer" id="timer">120</div>
 
     <div class="health-bar-container p2">
       <div class="player-face" id="hud-p2-face"></div>
@@ -482,20 +482,22 @@
   // --- OYUN AYARLARI ---
   const gravity = 0.7;
   let gameMode = 1;
-  let timer = 60;
+  // SÜRE 2 KATINA ÇIKARILDI (60 -> 120)
+  let timer = 120;
   let timerId;
   let gameRunning = false;
   let selectedMusic = 'manifest';
 
-  // Müzik Listesi (GÜNCELLENDİ)
+  // Müzik Listesi
   const musicList = ["manifest", "snap"];
 
   // Karakter Veritabanı
+  // HASARLAR YARIYA İNDİRİLDİ (4->2, 3->1.5)
   const characters = {
     zeynep: {
       name: "Zeynep",
       color: "#00008B",
-      stats: { speed: 5, jump: -15, damage: 4 },
+      stats: { speed: 5, jump: -15, damage: 2 },
       // YENİ ÖZELLİK AÇIKLAMASI
       abilityDesc: "Zoktay Modu: Uzaktan Vuruş (1 Kere - 5sn)",
       id: 'zeynep'
@@ -503,35 +505,35 @@
     esin: {
       name: "Esin",
       color: "#F1C40F",
-      stats: { speed: 5, jump: -22, damage: 4 },
+      stats: { speed: 5, jump: -22, damage: 2 },
       abilityDesc: "Güneş Modu: Yüksek Zıplama",
       id: 'esin'
     },
     mina: {
       name: "Mina",
       color: "#E74C3C",
-      stats: { speed: 5, jump: -15, damage: 4 },
+      stats: { speed: 5, jump: -15, damage: 2 },
       abilityDesc: "Mom Dokunulmazlık Modu: Kalkan (1 Kere - 5sn)",
       id: 'mina'
     },
     sueda: {
       name: "Sueda",
       color: "#2ECC71",
-      stats: { speed: 9, jump: -15, damage: 3 },
+      stats: { speed: 9, jump: -15, damage: 1.5 },
       abilityDesc: "Enerji Modu: Süper Hız",
       id: 'sueda'
     },
     hilal: {
       name: "Hilal",
       color: "#9B59B6",
-      stats: { speed: 5, jump: -15, damage: 4 },
+      stats: { speed: 5, jump: -15, damage: 2 },
       abilityDesc: "Güç Modu: Süper Yumruk (2 Kere)",
       id: 'hilal'
     },
     lidya: {
       name: "Lidya",
       color: "#FF69B4",
-      stats: { speed: 5, jump: -15, damage: 4 },
+      stats: { speed: 5, jump: -15, damage: 2 },
       abilityDesc: "Güç Modu: Süper Tekme (2 Kere)",
       id: 'lidya'
     }
@@ -648,6 +650,7 @@
         c.stroke();
       }
 
+      // ALTERNATİF ŞEKİL ÇİZİMİ (fillRect) KALDIRILDI
       if (this.image.complete && this.image.naturalHeight !== 0) {
         c.drawImage(
                 this.image,
@@ -656,9 +659,6 @@
                 this.width,
                 this.height
         );
-      } else {
-        c.fillStyle = this.color;
-        c.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
       }
 
       c.restore();
@@ -846,7 +846,7 @@
     document.getElementById('hud').classList.remove('hidden');
 
     const audioPlayer = document.getElementById('bg-music');
-    // MÜZİK DOSYA YOLU GÜNCELLENDİ (assets/music/ yerine assets/)
+    // MÜZİK DOSYA YOLU: assets/
     audioPlayer.src = `./assets/${selectedMusic}.mp3`;
     audioPlayer.volume = 0.4;
     audioPlayer.play().catch(e => console.log("Müzik hatası: ", e));
