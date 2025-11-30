@@ -1,264 +1,1106 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nazlı'nın Oyun Dünyası</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* GENEL SAYFA AYARLARI */
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #0f0f1a;
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-image:
-                    radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 20%),
-                    radial-gradient(circle at 90% 80%, rgba(255, 0, 128, 0.1) 0%, transparent 20%);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manifight - Ultimate Revised</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Roboto:wght@400;700&display=swap');
 
-        header {
-            text-align: center;
-            padding: 60px 20px 40px;
-        }
+    :root {
+      --primary: #e74c3c;
+      --secondary: #3498db;
+      --accent: #f1c40f;
+      --dark: #1a1a1a;
+      --glass: rgba(255, 255, 255, 0.1);
+    }
 
-        h1 {
-            margin: 0;
-            font-size: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            background: linear-gradient(90deg, #00f2ff, #ff0099);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
 
-        p.sub-text {
-            color: #a0a0b0;
-            margin-top: 10px;
-            font-size: 1.1rem;
-        }
+    body {
+      background-color: #000;
+      font-family: 'Roboto', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 25px;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            flex: 1;
-        }
+    /* --- OYUN EKRANI --- */
+    #game-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 1280px;
+      max-height: 720px;
+      background: #222;
+      box-shadow: 0 0 50px rgba(0,0,0,0.8);
+      overflow: hidden;
+      border-radius: 8px;
+    }
 
-        .card {
-            background: #1a1a2e;
-            border: 1px solid #2a2a40;
-            border-radius: 20px;
-            width: 320px;
-            overflow: hidden;
-            text-decoration: none;
-            color: white;
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
 
-        .card:hover {
-            transform: translateY(-8px);
-            border-color: #444466;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
+    /* --- UI KATMANLARI --- */
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 10;
+      transition: opacity 0.5s, transform 0.5s;
+    }
 
-        .card-img {
-            height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 60px;
-        }
+    .hidden {
+      display: none !important;
+    }
 
-        .card-content {
-            padding: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
+    /* --- BAŞLANGIÇ EKRANI ÖZEL --- */
+    #menu-screen {
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
 
-        .card h2 { margin: 0 0 10px; font-size: 1.4rem; }
-        .card p { margin: 0; font-size: 0.9rem; color: #bbb; line-height: 1.5; }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-        .play-btn {
-            margin-top: 15px;
-            display: inline-block;
-            color: #fff;
-            font-size: 0.9rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .play-btn::after { content: ' →'; }
+    h1 {
+      font-family: 'Black Ops One', cursive;
+      font-size: 6rem;
+      color: #fff;
+      text-shadow: 4px 4px 0px #000, 0 0 30px rgba(255,255,255,0.5);
+      margin-bottom: 1rem;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+    }
 
-        .tag {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
-        }
+    .btn {
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px solid #fff;
+      color: #fff;
+      padding: 15px 50px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      margin: 10px;
+      font-family: 'Black Ops One', cursive;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      backdrop-filter: blur(5px);
+      border-radius: 5px;
+    }
 
-        footer { text-align: center; padding: 30px; color: #555; font-size: 0.8rem; margin-top: 40px; }
+    .btn:hover {
+      background: #fff;
+      color: #000;
+      transform: scale(1.1) rotate(-1deg);
+      box-shadow: 0 0 20px #fff;
+    }
 
-        @media (max-width: 600px) {
-            h1 { font-size: 2rem; }
-            .card { width: 100%; }
-        }
-    </style>
+    /* --- KONTROLLER BİLGİ KUTUSU --- */
+    .controls-info {
+      display: flex;
+      gap: 40px;
+      margin-top: 40px;
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      border-radius: 10px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .control-group h3 {
+      color: var(--accent);
+      font-family: 'Black Ops One';
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      text-decoration: underline;
+    }
+
+    .control-group p {
+      color: #ddd;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      font-family: monospace;
+    }
+
+    .key {
+      color: #fff;
+      font-weight: bold;
+      background: #333;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-right: 5px;
+    }
+
+    /* --- KARAKTER SEÇİM EKRANI --- */
+    #char-select-container {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .player-select-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 350px;
+      background: rgba(0,0,0,0.6);
+      padding: 20px;
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .char-preview {
+      width: 250px;
+      height: 250px;
+      border: 4px solid #fff;
+      margin: 20px;
+      background-color: #333;
+      /* KARAKTER SEÇİMİNDE HEPSİ EŞİT GÖRÜNECEK */
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center bottom;
+      box-shadow: 0 0 30px rgba(255,255,255,0.1);
+      transition: transform 0.3s;
+    }
+
+    /* P2 Karakterleri Sola Baksın */
+    #p2-preview {
+      transform: scaleX(-1);
+    }
+
+    .selector-controls {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .arrow {
+      font-size: 3rem;
+      cursor: pointer;
+      color: #fff;
+      transition: 0.2s;
+      opacity: 0.7;
+    }
+
+    .arrow:hover { color: var(--accent); transform: scale(1.2); opacity: 1; }
+
+    .char-name {
+      font-size: 2.5rem;
+      color: #fff;
+      margin-top: 10px;
+      font-family: 'Black Ops One';
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .char-ability {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 5px;
+      text-align: center;
+      font-weight: bold;
+      background: rgba(0,0,0,0.8);
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    /* --- MÜZİK SEÇİM EKRANI --- */
+    #music-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+      width: 80%;
+      max-width: 800px;
+    }
+
+    .music-option {
+      background: rgba(255,255,255,0.1);
+      border: 2px solid transparent;
+      padding: 15px;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Black Ops One';
+      text-transform: uppercase;
+      transition: all 0.3s;
+      border-radius: 8px;
+    }
+
+    .music-option:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-5px);
+    }
+
+    .music-option.selected {
+      border-color: var(--accent);
+      background: rgba(241, 196, 15, 0.2);
+      box-shadow: 0 0 15px var(--accent);
+    }
+
+    /* --- OYUN İÇİ UI --- */
+    #hud {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .health-bar-container {
+      position: relative;
+      width: 40%;
+      height: 40px;
+      /* BAR RENGİ AÇIK TURUNCU YAPILDI */
+      background: #ffcc80;
+      border: 3px solid #fff;
+      display: flex;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+
+    .health-bar-container.p2 {
+      flex-direction: row-reverse;
+    }
+
+    .health {
+      height: 100%;
+      background: linear-gradient(90deg, #e74c3c, #c0392b);
+      width: 100%;
+      transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .player-face {
+      width: 80px;
+      height: 80px;
+      border: 3px solid #fff;
+      position: absolute;
+      top: -10px;
+      background-color: #000;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.8);
+      z-index: 2;
+    }
+
+    .p1 .player-face { left: -30px; }
+    .p2 .player-face { right: -30px; }
+
+    .timer {
+      width: 80px;
+      height: 80px;
+      background: #fff;
+      border: 4px solid #000;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      font-family: 'Black Ops One', cursive;
+      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+    }
+
+    .ability-indicator {
+      position: absolute;
+      bottom: -35px;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-shadow: 1px 1px 2px #000;
+      background: rgba(0,0,0,0.7);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .p1 .ability-indicator { left: 0; }
+    .p2 .ability-indicator { right: 0; }
+
+    /* --- GAME OVER --- */
+    #game-over-screen {
+      background: rgba(0,0,0,0.9);
+      backdrop-filter: blur(10px);
+    }
+
+    #winner-image {
+      width: 250px;
+      height: 250px;
+      object-fit: contain;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 30px rgba(255,255,255,0.6));
+      border-radius: 10px;
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    #winner-title {
+      font-size: 2rem;
+      color: #ccc;
+      margin-bottom: 5px;
+      font-family: 'Black Ops One';
+    }
+
+    #winner-name {
+      font-size: 5rem;
+      color: var(--accent);
+      text-shadow: 0 0 20px var(--accent);
+      margin-bottom: 40px;
+      font-family: 'Black Ops One';
+    }
+
+  </style>
 </head>
 <body>
 
-<header>
-    <h1>OYUN MERKEZİ</h1>
-    <p class="sub-text">Barış'ın Dijital Portföyü</p>
-</header>
+<div id="game-container">
+  <div id="menu-screen" class="screen">
+    <h1>MANIFIGHT</h1>
+    <div>
+      <button class="btn" onclick="startGameSetup(1)">1 Oyuncu (vs PC)</button>
+      <button class="btn" onclick="startGameSetup(2)">2 Oyuncu</button>
+    </div>
 
-<div class="container">
+    <div class="controls-info">
+      <div class="control-group">
+        <h3>OYUNCU 1 (Sol)</h3>
+        <p><span class="key">A</span> <span class="key">D</span> Hareket</p>
+        <p><span class="key">W</span> Zıpla</p>
+        <p><span class="key">F</span> Yumruk</p>
+        <p><span class="key">G</span> Tekme</p>
+        <p><span class="key">H</span> Özel Yetenek</p>
+      </div>
+      <div class="control-group">
+        <h3>OYUNCU 2 (Sağ)</h3>
+        <p><span class="key">←</span> <span class="key">→</span> Hareket</p>
+        <p><span class="key">↑</span> Zıpla</p>
+        <p><span class="key">K</span> Yumruk</p>
+        <p><span class="key">L</span> Tekme</p>
+        <p><span class="key">Ş</span> Özel Yetenek</p>
+      </div>
+    </div>
+  </div>
 
-    <a href="dedektif/index.html" class="card" style="border: 2px solid #d35400;">
-        <div class="card-img" style="background: radial-gradient(circle, #3e2723, #1a0000);">
-            📰
-        </div>
-        <div class="tag" style="color: #ffcc00;">YENİ</div>
-        <div class="card-content">
-            <h2 style="color: #d35400;">Kızıl Dava: 1980</h2>
-            <p>Eski bir cinayet dosyası. Gazeteler, otopsi raporları ve ifadeler... Köydeki katili bulabilir misin?</p>
-            <span class="play-btn" style="color: #e67e22;">Dosyayı Aç</span>
-        </div>
-    </a>
+  <div id="select-screen" class="screen hidden">
+    <h2 style="color:white; margin-bottom: 30px; font-family: 'Black Ops One'; font-size: 3rem;">KARAKTER SEÇİMİ</h2>
 
-    <a href="dedektif_pro/index.html" class="card">
-        <div class="card-img" style="background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);">
-            💻
+    <div id="char-select-container">
+      <div class="player-select-box">
+        <h3 style="color: cyan; font-family: 'Black Ops One';">OYUNCU 1</h3>
+        <div class="selector-controls">
+          <div class="arrow" onclick="changeChar(1, -1)">&#9664;</div>
+          <div class="char-preview" id="p1-preview"></div>
+          <div class="arrow" onclick="changeChar(1, 1)">&#9654;</div>
         </div>
-        <div class="tag" style="color: #00ff00;">Hacker</div>
-        <div class="card-content">
-            <h2>Siber Dedektif</h2>
-            <p>Modern bir cinayet vakası. Bilgisayara sız, WhatsApp mesajlarını ve Dark Web'i araştır.</p>
-            <span class="play-btn" style="color: #4ade80;">Sisteme Gir</span>
-        </div>
-    </a>
+        <div class="char-name" id="p1-name">Zeynep</div>
+        <div class="char-ability" id="p1-ability"></div>
+      </div>
 
-    <a href="kahin/index.html" class="card">
-        <div class="card-img" style="background: linear-gradient(135deg, #667eea, #764ba2);">
-            🔮
+      <div class="player-select-box">
+        <h3 style="color: red; font-family: 'Black Ops One';">OYUNCU 2 <span id="cpu-tag" style="font-size:0.5em">(CPU)</span></h3>
+        <div class="selector-controls">
+          <div class="arrow" onclick="changeChar(2, -1)">&#9664;</div>
+          <div class="char-preview" id="p2-preview"></div>
+          <div class="arrow" onclick="changeChar(2, 1)">&#9654;</div>
         </div>
-        <div class="tag" style="color: #e0c3fc;">Troll</div>
-        <div class="card-content">
-            <h2>Mistik Kahin</h2>
-            <p>Aklından bir soru tut, Yüce Kahin sana (biraz sinir bozucu) cevabını versin.</p>
-            <span class="play-btn" style="color: #c4b5fd;">Geleceği Gör</span>
-        </div>
-    </a>
+        <div class="char-name" id="p2-name">Zeynep</div>
+        <div class="char-ability" id="p2-ability"></div>
+      </div>
+    </div>
 
-    <a href="avci/index.html" class="card">
-        <div class="card-img" style="background: linear-gradient(135deg, #ff9a9e, #fecfef);">
-            🔨
-        </div>
-        <div class="tag" style="color: #ff9a9e;">Aksiyon</div>
-        <div class="card-content">
-            <h2>Ekibi Yakala</h2>
-            <p>Arkadaşların deliklerden fırlıyor! Süre bitmeden hepsini çekiçle yakala.</p>
-            <span class="play-btn" style="color: #fda4af;">Avı Başlat</span>
-        </div>
-    </a>
+    <button class="btn" style="margin-top: 40px;" onclick="goToMusicSelect()">SEÇİMİ ONAYLA</button>
+  </div>
 
-    <a href="yilan/index.html" class="card">
-        <div class="card-img" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
-            🐍
-        </div>
-        <div class="tag" style="color: #86efac;">Klasik</div>
-        <div class="card-content">
-            <h2>Neon Yılan</h2>
-            <p>Modernize edilmiş klasik yılan oyunu. Duvarlardan geçebilirsin ama kendine çarpma!</p>
-            <span class="play-btn" style="color: #4ade80;">Oyna</span>
-        </div>
-    </a>
+  <div id="music-screen" class="screen hidden">
+    <h2 style="color:white; margin-bottom: 30px; font-family: 'Black Ops One'; font-size: 2.5rem;">SAVAŞ MÜZİĞİ SEÇ</h2>
 
-    <a href="karanlik/index.html" class="card">
-        <div class="card-img" style="background: radial-gradient(circle, #333, #000);">
-            🔦
-        </div>
-        <div class="tag" style="color: #cbd5e1;">Korku</div>
-        <div class="card-content">
-            <h2>Karanlık Oda</h2>
-            <p>Burada hiçbir şey görünmüyor. Fenerini kullan ve gizli mesajları bul. Sesi aç.</p>
-            <span class="play-btn" style="color: #94a3b8;">Giriş Yap</span>
-        </div>
-    </a>
+    <div id="music-grid">
+    </div>
 
-    <a href="kapsul/index.html" class="card">
-        <div class="card-img" style="background: linear-gradient(135deg, #00c6ff, #0072ff);">
-            ⏳
-        </div>
-        <div class="tag" style="color: #93c5fd;">Gizem</div>
-        <div class="card-content">
-            <h2>Zaman Kapsülü</h2>
-            <p>Geleceğe bir not bırak ve kilitle. Süre dolana kadar kimse okuyamaz.</p>
-            <span class="play-btn" style="color: #60a5fa;">Kapsülü Aç</span>
-        </div>
-    </a>
+    <button class="btn" onclick="initGame()">DÖVÜŞ BAŞLASIN</button>
+  </div>
 
-    <a href="kum/index.html" class="card">
-        <div class="card-img" style="background: linear-gradient(135deg, #ff0844, #ffb199);">
-            ✨
-        </div>
-        <div class="tag" style="color: #fca5a5;">Sanat</div>
-        <div class="card-content">
-            <h2>Dijital Kum</h2>
-            <p>Rengarenk kumlarla oyna. Yerçekimi ve fizik kurallarıyla sanat yap. Stres at.</p>
-            <span class="play-btn" style="color: #f87171;">Sanat Yap</span>
-        </div>
-    </a>
+  <div id="hud" class="hidden">
+    <div class="health-bar-container p1">
+      <div class="player-face" id="hud-p1-face"></div>
+      <div class="health" id="p1-health"></div>
+      <div class="ability-indicator" id="p1-ability-status">Yetenek Hazır</div>
+    </div>
 
-    <a href="savunma/index.html" class="card">
-        <div class="card-img" style="background: linear-gradient(135deg, #2c3e50, #000000);">
-            🔫
-        </div>
-        <div class="tag" style="color: #fbbf24;">Strateji</div>
-        <div class="card-content">
-            <h2>Kaleni Savun</h2>
-            <p>Düşmanlar dalga dalga geliyor! Silahını kuşan, nişan al ve kaleni sonuna kadar koru.</p>
-            <span class="play-btn" style="color: #fcd34d;">Ateş Et</span>
-        </div>
-    </a>
+    <div class="timer" id="timer">60</div>
 
-    <a href="manifight/index.html" class="card">
-        <div class="card-img" style="background: linear-gradient(135deg, #240b36, #c31432);">
-            🌒
-        </div>
-        <div class="tag" style="color: #e879f9;">Dövüş</div>
-        <div class="card-content">
-            <h2>Manifight</h2>
-            <p>Sahne ışığının altında kozlarını paylaş. Favori Manifest kızını seç ve arenanın kazananı sen ol.</p>
-            <span class="play-btn" style="color: #d946ef;">Dövüşe Başla</span>
-        </div>
-    </a>
+    <div class="health-bar-container p2">
+      <div class="player-face" id="hud-p2-face"></div>
+      <div class="health" id="p2-health"></div>
+      <div class="ability-indicator" id="p2-ability-status">Yetenek Hazır</div>
+    </div>
+  </div>
 
+  <div id="game-over-screen" class="screen hidden">
+    <img id="winner-image" src="" alt="Winner">
+    <h2 id="winner-title">KAZANAN</h2>
+    <h1 id="winner-name">ZEYNEP</h1>
+    <button class="btn" onclick="location.reload()">TEKRAR OYNA</button>
+  </div>
+
+  <canvas id="canvas"></canvas>
+  <audio id="bg-music" loop></audio>
 </div>
 
-<footer>
-    <p>2025 | Site tamamen şahsıma aittir, link hariç giriş mümkün değildir, iyi oyunlar 👾</p>
-</footer>
+<script>
+  /** * MANIFIGHT GAME ENGINE - REVISED EDITION */
 
+  const canvas = document.getElementById('canvas');
+  const c = canvas.getContext('2d');
+
+  canvas.width = 1024;
+  canvas.height = 576;
+
+  // --- OYUN AYARLARI ---
+  const gravity = 0.7;
+  let gameMode = 1;
+  let timer = 60;
+  let timerId;
+  let gameRunning = false;
+  let selectedMusic = 'manifest';
+
+  // Müzik Listesi
+  const musicList = ["manifest", "snap", "rüya", "KTS", "zamansızdık", "arıyo", "zehir"];
+
+  // Karakter Veritabanı
+  const characters = {
+    zeynep: {
+      name: "Zeynep",
+      color: "#00008B",
+      stats: { speed: 5, jump: -15, damage: 4 },
+      // YENİ ÖZELLİK AÇIKLAMASI
+      abilityDesc: "Zoktay Modu: Uzaktan Vuruş (1 Kere - 5sn)",
+      id: 'zeynep'
+    },
+    esin: {
+      name: "Esin",
+      color: "#F1C40F",
+      stats: { speed: 5, jump: -22, damage: 4 },
+      abilityDesc: "Güneş Modu: Yüksek Zıplama",
+      id: 'esin'
+    },
+    mina: {
+      name: "Mina",
+      color: "#E74C3C",
+      stats: { speed: 5, jump: -15, damage: 4 },
+      abilityDesc: "Mom Dokunulmazlık Modu: Kalkan (1 Kere - 5sn)",
+      id: 'mina'
+    },
+    sueda: {
+      name: "Sueda",
+      color: "#2ECC71",
+      stats: { speed: 9, jump: -15, damage: 3 },
+      abilityDesc: "Enerji Modu: Süper Hız",
+      id: 'sueda'
+    },
+    hilal: {
+      name: "Hilal",
+      color: "#9B59B6",
+      stats: { speed: 5, jump: -15, damage: 4 },
+      abilityDesc: "Güç Modu: Süper Yumruk (2 Kere)",
+      id: 'hilal'
+    },
+    lidya: {
+      name: "Lidya",
+      color: "#FF69B4",
+      stats: { speed: 5, jump: -15, damage: 4 },
+      abilityDesc: "Güç Modu: Süper Tekme (2 Kere)",
+      id: 'lidya'
+    }
+  };
+
+  const charKeys = Object.keys(characters);
+  let p1SelectionIndex = 0;
+  let p2SelectionIndex = 1;
+
+  // --- SINIFLAR ---
+
+  class Sprite {
+    constructor({ position, imageSrc, scale = 1 }) {
+      this.position = position;
+      this.width = 50;
+      this.height = 150;
+      this.image = new Image();
+      this.image.src = imageSrc;
+      this.scale = scale;
+    }
+
+    draw() {
+      if (this.image.complete && this.image.naturalHeight !== 0) {
+        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+      }
+    }
+
+    update() {
+      this.draw();
+    }
+  }
+
+  class Fighter extends Sprite {
+    constructor({
+                  position,
+                  velocity,
+                  color = 'red',
+                  offset = { x: 0, y: 0 },
+                  charId,
+                  isPlayer1 = true
+                }) {
+      super({ position, imageSrc: '' });
+      this.velocity = velocity;
+
+      this.width = 125;
+      this.height = 200;
+
+      this.lastKey;
+      this.facing = isPlayer1 ? 'right' : 'left';
+
+      this.charData = characters[charId];
+      this.color = this.charData.color;
+      this.health = 100;
+      this.isDead = false;
+
+      this.sprites = {
+        idle: `./assets/${charId}/idle.png`,
+        punch: `./assets/${charId}/punch.png`,
+        kick: `./assets/${charId}/kick.png`,
+        hit: `./assets/${charId}/hit.png`,
+        lost: `./assets/${charId}/lost.png`
+      };
+
+      this.image.src = this.sprites.idle;
+
+      this.attackBox = {
+        position: { x: this.position.x, y: this.position.y },
+        offset: offset,
+        width: 140,
+        height: 60
+      };
+
+      this.isAttacking = false;
+      this.attackType = '';
+
+      this.abilityUsedCount = 0;
+      this.isShielded = false;
+      this.isInvisible = false;
+
+      this.isRangeBoosted = false; // ZEYNEP İÇİN YENİ DEĞİŞKEN
+      this.nextHitPowered = false;
+
+      this.stats = { ...this.charData.stats };
+      this.isPlayer1 = isPlayer1;
+    }
+
+    draw() {
+      c.save();
+
+      const centerX = this.position.x + this.width / 2;
+      const centerY = this.position.y + this.height / 2;
+
+      c.translate(centerX, centerY);
+
+      if (this.facing === 'left') {
+        c.scale(-1, 1);
+      }
+
+      // Efektler
+      if (this.isInvisible) c.globalAlpha = 0.2;
+
+      // Zeynep (isRangeBoosted) veya Diğerlerinin Güç Efekti
+      if (this.isRangeBoosted || this.nextHitPowered) {
+        c.shadowBlur = 20;
+        // Zeynep için menzil açıkken de kırmızı yansın
+        c.shadowColor = this.charData.id === 'zeynep' ? "red" : "purple";
+      }
+
+      if (this.isShielded) {
+        c.beginPath();
+        c.arc(0, 0, 90, 0, 2 * Math.PI);
+        c.strokeStyle = 'cyan';
+        c.lineWidth = 5;
+        c.stroke();
+      }
+
+      if (this.image.complete && this.image.naturalHeight !== 0) {
+        c.drawImage(
+                this.image,
+                -this.width / 2,
+                -this.height / 2,
+                this.width,
+                this.height
+        );
+      } else {
+        c.fillStyle = this.color;
+        c.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+      }
+
+      c.restore();
+    }
+
+    update() {
+      this.draw();
+
+      if (!this.isDead) {
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+
+        if (this.position.y + this.height + this.velocity.y >= canvas.height - 50) {
+          this.velocity.y = 0;
+          this.position.y = canvas.height - 50 - this.height;
+        } else {
+          this.velocity.y += gravity;
+        }
+
+        // HAREKET VE YÖN MANTIĞI
+        if (this.velocity.x > 0) {
+          this.facing = 'right';
+        } else if (this.velocity.x < 0) {
+          this.facing = 'left';
+        }
+      }
+
+      // Attack Box Yönü
+      if (this.facing === 'right') {
+        this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
+      } else {
+        this.attackBox.position.x = this.position.x - this.attackBox.width + this.width;
+      }
+      this.attackBox.position.y = this.position.y + 60;
+    }
+
+    attack(type) {
+      if (this.isDead) return;
+
+      this.isAttacking = true;
+      this.attackType = type;
+
+      if (type === 'punch') this.image.src = this.sprites.punch;
+      if (type === 'kick') this.image.src = this.sprites.kick;
+
+      setTimeout(() => {
+        this.isAttacking = false;
+        if(!this.isDead) this.image.src = this.sprites.idle;
+      }, 400);
+    }
+
+    takeHit(damage) {
+      if (this.isShielded) return;
+
+      this.health -= damage;
+      this.image.src = this.sprites.hit;
+
+      setTimeout(() => {
+        if(this.health > 0) this.image.src = this.sprites.idle;
+      }, 300);
+
+      if (this.health <= 0) {
+        this.health = 0;
+        this.isDead = true;
+        this.image.src = this.sprites.lost;
+      }
+    }
+
+    useAbility() {
+      if (this.isDead) return;
+
+      // ZEYNEP: UZAKTAN VURUŞ (YENİ ÖZELLİK)
+      // 1 Kez Kullanılabilir, 5 Saniye Sürer
+      if (this.charData.id === 'zeynep' && this.abilityUsedCount < 1) {
+        this.isRangeBoosted = true; // Menzil kilidini kaldır
+        this.abilityUsedCount++;
+        updateAbilityUI(this.isPlayer1, `UZAK MENZİL! (5sn)`);
+
+        setTimeout(() => {
+          this.isRangeBoosted = false;
+          updateAbilityUI(this.isPlayer1, "Bitti");
+        }, 5000);
+      }
+      // MINA: Kalkan (Sadece 1 kez, 5 sn)
+      else if (this.charData.id === 'mina' && this.abilityUsedCount < 1) {
+        this.isShielded = true;
+        this.abilityUsedCount++;
+        updateAbilityUI(this.isPlayer1, "Kalkan Aktif!");
+        setTimeout(() => {
+          this.isShielded = false;
+          updateAbilityUI(this.isPlayer1, "Bitti");
+        }, 5000);
+      }
+      // HILAL ve LIDYA (2 Kez kullanılabilir)
+      else if ((this.charData.id === 'hilal' || this.charData.id === 'lidya') && this.abilityUsedCount < 2) {
+        this.nextHitPowered = true;
+        this.abilityUsedCount++;
+        updateAbilityUI(this.isPlayer1, `GÜÇLENDİ! (${2-this.abilityUsedCount})`);
+      }
+    }
+  }
+
+  // --- OYUN DEĞİŞKENLERİ ---
+  let player, enemy;
+  const keys = {
+    a: { pressed: false },
+    d: { pressed: false },
+    w: { pressed: false },
+    ArrowLeft: { pressed: false },
+    ArrowRight: { pressed: false },
+    ArrowUp: { pressed: false }
+  };
+
+  // --- MENÜ FONKSİYONLARI ---
+  function startGameSetup(mode) {
+    gameMode = mode;
+    document.getElementById('menu-screen').classList.add('hidden');
+    document.getElementById('select-screen').classList.remove('hidden');
+
+    if (mode === 1) document.getElementById('cpu-tag').style.display = 'inline';
+    else document.getElementById('cpu-tag').style.display = 'none';
+
+    updateSelectionUI();
+  }
+
+  function changeChar(playerNum, dir) {
+    if (playerNum === 1) {
+      p1SelectionIndex += dir;
+      if (p1SelectionIndex < 0) p1SelectionIndex = charKeys.length - 1;
+      if (p1SelectionIndex >= charKeys.length) p1SelectionIndex = 0;
+    } else {
+      p2SelectionIndex += dir;
+      if (p2SelectionIndex < 0) p2SelectionIndex = charKeys.length - 1;
+      if (p2SelectionIndex >= charKeys.length) p2SelectionIndex = 0;
+    }
+    updateSelectionUI();
+  }
+
+  function updateSelectionUI() {
+    const p1Key = charKeys[p1SelectionIndex];
+    const p2Key = charKeys[p2SelectionIndex];
+
+    // P1
+    document.getElementById('p1-name').innerText = characters[p1Key].name;
+    document.getElementById('p1-ability').innerText = characters[p1Key].abilityDesc;
+    const p1Preview = document.getElementById('p1-preview');
+    p1Preview.style.backgroundImage = `url('./assets/${p1Key}/idle.png')`;
+    p1Preview.style.backgroundColor = characters[p1Key].color;
+    // Hepsi eşit görünsün diye 'contain' kullanıldı
+
+    // P2
+    document.getElementById('p2-name').innerText = characters[p2Key].name;
+    document.getElementById('p2-ability').innerText = characters[p2Key].abilityDesc;
+    const p2Preview = document.getElementById('p2-preview');
+    p2Preview.style.backgroundImage = `url('./assets/${p2Key}/idle.png')`;
+    p2Preview.style.backgroundColor = characters[p2Key].color;
+  }
+
+  function goToMusicSelect() {
+    document.getElementById('select-screen').classList.add('hidden');
+    document.getElementById('music-screen').classList.remove('hidden');
+
+    const grid = document.getElementById('music-grid');
+    grid.innerHTML = '';
+
+    musicList.forEach(song => {
+      const div = document.createElement('div');
+      div.className = 'music-option';
+      div.innerText = song;
+      if(song === selectedMusic) div.classList.add('selected');
+
+      div.onclick = () => {
+        document.querySelectorAll('.music-option').forEach(el => el.classList.remove('selected'));
+        div.classList.add('selected');
+        selectedMusic = song;
+      };
+
+      grid.appendChild(div);
+    });
+  }
+
+  // --- OYUNU BAŞLATMA ---
+  function initGame() {
+    document.getElementById('music-screen').classList.add('hidden');
+    document.getElementById('hud').classList.remove('hidden');
+
+    const audioPlayer = document.getElementById('bg-music');
+    audioPlayer.src = `./assets/music/${selectedMusic}.mp3`;
+    audioPlayer.volume = 0.4;
+    audioPlayer.play().catch(e => console.log("Müzik hatası: ", e));
+
+    const p1Char = charKeys[p1SelectionIndex];
+    const p2Char = charKeys[p2SelectionIndex];
+
+    const bgImage = new Sprite({
+      position: { x: 0, y: 0 },
+      imageSrc: './assets/background.png'
+    });
+
+    player = new Fighter({
+      position: { x: 100, y: 0 },
+      velocity: { x: 0, y: 0 },
+      charId: p1Char,
+      isPlayer1: true
+    });
+
+    enemy = new Fighter({
+      position: { x: 800, y: 0 },
+      velocity: { x: 0, y: 0 },
+      charId: p2Char,
+      isPlayer1: false
+    });
+    // P2 Başlangıçta sola baksın
+    enemy.facing = 'left';
+
+    document.getElementById('hud-p1-face').style.backgroundImage = `url('./assets/${p1Char}/face.png')`;
+    document.getElementById('hud-p2-face').style.backgroundImage = `url('./assets/${p2Char}/face.png')`;
+    document.querySelector('.health-bar-container.p1').style.backgroundColor = '#ffcc80'; // Turuncu
+    document.querySelector('.health-bar-container.p2').style.backgroundColor = '#ffcc80'; // Turuncu
+
+    // Reset UI
+    document.getElementById('p1-health').style.width = '100%';
+    document.getElementById('p2-health').style.width = '100%';
+    updateAbilityUI(true, "Yetenek Hazır");
+    updateAbilityUI(false, "Yetenek Hazır");
+
+    gameRunning = true;
+    decreaseTimer();
+    animate(bgImage);
+  }
+
+  function updateAbilityUI(isP1, text) {
+    const id = isP1 ? 'p1-ability-status' : 'p2-ability-status';
+    document.getElementById(id).innerText = text;
+  }
+
+  // --- ANIMATION LOOP ---
+  function animate(bg) {
+    if (!gameRunning) return;
+
+    window.requestAnimationFrame(() => animate(bg));
+
+    c.fillStyle = 'black';
+    c.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (bg.image.complete) {
+      c.drawImage(bg.image, 0, 0, canvas.width, canvas.height);
+    } else {
+      let grd = c.createLinearGradient(0, 0, 0, canvas.height);
+      grd.addColorStop(0, "#2c3e50");
+      grd.addColorStop(1, "#000000");
+      c.fillStyle = grd;
+      c.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    player.update();
+    enemy.update();
+
+    player.velocity.x = 0;
+    enemy.velocity.x = 0;
+
+    // P1 HAREKET
+    if (!player.isDead) {
+      if (keys.a.pressed && player.lastKey === 'a') {
+        player.velocity.x = -player.stats.speed;
+      } else if (keys.d.pressed && player.lastKey === 'd') {
+        player.velocity.x = player.stats.speed;
+      }
+    }
+
+    // P2 HAREKET
+    if (!enemy.isDead) {
+      if (gameMode === 2) {
+        if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
+          enemy.velocity.x = -enemy.stats.speed;
+        } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
+          enemy.velocity.x = enemy.stats.speed;
+        }
+      } else {
+        // AI Logic
+        const distance = player.position.x - enemy.position.x;
+        if (distance < -120) enemy.velocity.x = -enemy.stats.speed * 0.6;
+        else if (distance > 120) enemy.velocity.x = enemy.stats.speed * 0.6;
+        else if (Math.random() < 0.02) aiAttack();
+
+        if(player.position.x < enemy.position.x) enemy.facing = 'left';
+        else enemy.facing = 'right';
+      }
+    }
+
+    detectCollision(player, enemy);
+    detectCollision(enemy, player);
+
+    if (player.health <= 0 || enemy.health <= 0) {
+      determineWinner({ player, enemy, timerId });
+    }
+  }
+
+  function aiAttack() {
+    if(enemy.isAttacking || enemy.isDead) return;
+    const attackType = Math.random() < 0.5 ? 'punch' : 'kick';
+    enemy.attack(attackType);
+  }
+
+  function detectCollision(attacker, victim) {
+    // Normal Çarpışma Tespiti
+    let hitDetected = (
+            attacker.isAttacking &&
+            attacker.attackBox.position.x + attacker.attackBox.width >= victim.position.x &&
+            attacker.attackBox.position.x <= victim.position.x + victim.width &&
+            attacker.attackBox.position.y + attacker.attackBox.height >= victim.position.y &&
+            attacker.attackBox.position.y <= victim.position.y + victim.height
+    );
+
+    // ZEYNEP ÖZEL DURUMU: UZAK MESAFE (Range Boost)
+    // Eğer Zeynep'in özel gücü aktifse, normal çarpışma kontrolünü yok say ve direkt vur.
+    if (attacker.isAttacking && attacker.charData.id === 'zeynep' && attacker.isRangeBoosted) {
+      hitDetected = true;
+    }
+
+    if (hitDetected && !victim.isDead) {
+      attacker.isAttacking = false;
+      let damage = attacker.stats.damage;
+
+      // HILAL ve LIDYA (2 Kez kullanılabilir özel vuruş)
+      if (attacker.nextHitPowered) {
+        if ((attacker.charData.id === 'hilal' && attacker.attackType === 'punch') ||
+                (attacker.charData.id === 'lidya' && attacker.attackType === 'kick')) {
+          damage += 15; // Ekstra Hasar
+          attacker.nextHitPowered = false; // Gücü tüketti
+          updateAbilityUI(attacker.isPlayer1, attacker.abilityUsedCount >= 2 ? "Bitti" : "Hazır");
+        }
+      }
+
+      victim.takeHit(damage);
+
+      if (victim === player) document.getElementById('p1-health').style.width = victim.health + '%';
+      else document.getElementById('p2-health').style.width = victim.health + '%';
+    }
+  }
+
+  function determineWinner({ player, enemy, timerId }) {
+    clearTimeout(timerId);
+    gameRunning = false;
+    document.getElementById('bg-music').pause();
+
+    let winnerName = "BERABERE";
+    let winnerCharId = "";
+    let winnerColor = "#333";
+
+    if (player.health === enemy.health) {
+      // Berabere
+    } else if (player.health > enemy.health) {
+      winnerName = player.charData.name + " KAZANDI!";
+      winnerCharId = player.charData.id;
+      winnerColor = player.color;
+    } else {
+      winnerName = enemy.charData.name + " KAZANDI!";
+      winnerCharId = enemy.charData.id;
+      winnerColor = enemy.color;
+    }
+
+    const screen = document.getElementById('game-over-screen');
+    screen.classList.remove('hidden');
+    document.getElementById('winner-name').innerText = winnerName;
+    document.getElementById('winner-name').style.color = winnerColor;
+    document.getElementById('winner-name').style.textShadow = `0 0 30px ${winnerColor}`;
+
+    if (winnerCharId) {
+      document.getElementById('winner-image').src = `./assets/${winnerCharId}/idle.png`;
+      document.getElementById('winner-image').style.display = 'block';
+    } else {
+      document.getElementById('winner-image').style.display = 'none';
+    }
+  }
+
+  function decreaseTimer() {
+    if (timer > 0) {
+      timerId = setTimeout(decreaseTimer, 1000);
+      timer--;
+      document.getElementById('timer').innerText = timer;
+    } else {
+      determineWinner({ player, enemy, timerId });
+    }
+  }
+
+  // --- KLAVYE DİNLEYİCİLERİ ---
+  window.addEventListener('keydown', (event) => {
+    if (!gameRunning) return;
+
+    if (!player.isDead) {
+      switch (event.key.toLowerCase()) {
+        case 'd':
+          keys.d.pressed = true;
+          player.lastKey = 'd';
+          break;
+        case 'a':
+          keys.a.pressed = true;
+          player.lastKey = 'a';
+          break;
+        case 'w':
+          if(player.position.y + player.height >= canvas.height - 50)
+            player.velocity.y = player.stats.jump;
+          break;
+        case 'f': player.attack('punch'); break;
+        case 'g': player.attack('kick'); break;
+        case 'h': player.useAbility(); break;
+      }
+    }
+
+    if (!enemy.isDead && gameMode === 2) {
+      switch (event.key) {
+        case 'ArrowRight':
+          keys.ArrowRight.pressed = true;
+          enemy.lastKey = 'ArrowRight';
+          break;
+        case 'ArrowLeft':
+          keys.ArrowLeft.pressed = true;
+          enemy.lastKey = 'ArrowLeft';
+          break;
+        case 'ArrowUp':
+          if(enemy.position.y + enemy.height >= canvas.height - 50)
+            enemy.velocity.y = enemy.stats.jump;
+          break;
+        case 'k': enemy.attack('punch'); break;
+        case 'l': enemy.attack('kick'); break;
+        case 'ş': case 'Ş': case ';': enemy.useAbility(); break;
+      }
+    }
+  });
+
+  window.addEventListener('keyup', (event) => {
+    switch (event.key.toLowerCase()) {
+      case 'd': keys.d.pressed = false; break;
+      case 'a': keys.a.pressed = false; break;
+    }
+    switch (event.key) {
+      case 'ArrowRight': keys.ArrowRight.pressed = false; break;
+      case 'ArrowLeft': keys.ArrowLeft.pressed = false; break;
+    }
+  });
+
+</script>
 </body>
 </html>
