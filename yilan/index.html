@@ -1,105 +1,221 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Neon Yılan</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #050505;
-      color: white;
-      font-family: 'Courier New', Courier, monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      overflow: hidden;
-      touch-action: none;
-    }
-    h1 { margin: 10px 0; text-shadow: 0 0 10px #00ff00; font-size: 2rem; }
-    #oyunAlani { background-color: #000; border: 2px solid #333; box-shadow: 0 0 20px rgba(0, 255, 0, 0.2); display: block; }
-    .bilgi { margin-top: 10px; font-size: 1.2rem; color: #ccc; }
-    #bitisEkrani { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.9); border: 2px solid #00ff00; padding: 30px; text-align: center; display: none; box-shadow: 0 0 50px rgba(0, 255, 0, 0.5); border-radius: 10px; }
-    button { background: #00ff00; color: black; border: none; padding: 10px 20px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 20px; border-radius: 5px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Yılan: Pro Max</title>
+    <style>
+        body {
+            margin: 0; padding: 0; background-color: #050505; color: white;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden; touch-action: none;
+        }
+        #oyunKonteyner { position: relative; border: 4px solid #333; box-shadow: 0 0 40px rgba(0,255,0,0.15); }
+        canvas { display: block; background: #000; max-width: 95vw; max-height: 75vh; }
+
+        .ekran {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 10; text-align: center;
+        }
+        .renk-secenekleri { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .renk-kutusu { width: 45px; height: 45px; border-radius: 50%; cursor: pointer; border: 3px solid #fff; transition: 0.3s; }
+        .renk-kutusu:hover { transform: scale(1.2); filter: brightness(1.2); }
+
+        button { background: #00ff00; color: #000; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 10px; }
+        .istatistik { margin-top: 10px; font-size: 1.1rem; color: #aaa; display: flex; gap: 30px; }
+        #hayaletBar { width: 0%; height: 6px; background: #ff00ff; position: absolute; bottom: 0; box-shadow: 0 0 10px #ff00ff; }
+    </style>
 </head>
 <body>
-<h1>NEON YILAN</h1>
-<canvas id="oyunAlani" width="360" height="360"></canvas>
-<div class="bilgi">SKOR: <span id="skor">0</span></div>
-<div id="bitisEkrani">
-  <h2 style="color: #ff0055;">OYUN BİTTİ</h2>
-  <p>Skorun: <span id="sonSkor">0</span></p>
-  <button onclick="oyunuBaslat()">TEKRAR OYNA</button>
+
+<h1 style="text-shadow: 0 0 15px #00ff00; margin: 5px 0;">NEON YILAN PRO MAX</h1>
+
+<div id="oyunKonteyner">
+    <div id="baslangicEkrani" class="ekran">
+        <h2 style="color: #00ff00;">RENK SEÇ VE BAŞLA</h2>
+        <div class="renk-secenekleri">
+            <div class="renk-kutusu" style="background: #00ff00; box-shadow: 0 0 15px #00ff00;" onclick="oyunuBaslat('#00ff00', '#008f00')"></div>
+            <div class="renk-kutusu" style="background: #00ffff; box-shadow: 0 0 15px #00ffff;" onclick="oyunuBaslat('#00ffff', '#008b8b')"></div>
+            <div class="renk-kutusu" style="background: #ff00ff; box-shadow: 0 0 15px #ff00ff;" onclick="oyunuBaslat('#ff00ff', '#8b008b')"></div>
+            <div class="renk-kutusu" style="background: #ffff00; box-shadow: 0 0 15px #ffff00;" onclick="oyunuBaslat('#ffff00', '#8b8b00')"></div>
+            <div class="renk-kutusu" style="background: #ff8000; box-shadow: 0 0 15px #ff8000;" onclick="oyunuBaslat('#ff8000', '#8b4500')"></div>
+            <div class="renk-kutusu" style="background: #ffffff; box-shadow: 0 0 15px #ffffff;" onclick="oyunuBaslat('#ffffff', '#888888')"></div>
+        </div>
+        <p id="rekorGosterge" style="color: gold;"></p>
+    </div>
+
+    <div id="bitisEkrani" class="ekran" style="display: none;">
+        <h2 style="color: #ff0055; font-size: 2.5rem;">OYUN BİTTİ</h2>
+        <p style="font-size: 1.5rem;">Skorun: <span id="sonSkor">0</span></p>
+        <button onclick="location.reload()">TEKRAR DENE</button>
+    </div>
+
+    <canvas id="oyunAlani" width="600" height="600"></canvas>
+    <div id="hayaletBar"></div>
 </div>
+
+<div class="istatistik">
+    <div>SKOR: <span id="skor">0</span></div>
+    <div>REKOR: <span id="rekor">0</span></div>
+</div>
+
 <script>
-  const canvas = document.getElementById('oyunAlani');
-  const ctx = canvas.getContext('2d');
-  const skorText = document.getElementById('skor');
-  const bitisEkrani = document.getElementById('bitisEkrani');
-  const sonSkorText = document.getElementById('sonSkor');
-  const kareBoyutu = 20;
-  let hiz = 10; let skor = 0;
-  let yilan = [{x: 10, y: 10}]; let yem = {x: 15, y: 15};
-  let dx = 0; let dy = 0; let oyunDongusu;
-
-  function oyunuBaslat() {
-    yilan = [{x: 10, y: 10}]; skor = 0; dx = 1; dy = 0; hiz = 10;
-    skorText.innerText = skor; bitisEkrani.style.display = 'none';
-    rastgeleYem();
-    if(oyunDongusu) clearInterval(oyunDongusu);
-    oyunDongusu = setInterval(cizimYap, 1000 / hiz);
-  }
-
-  function cizimYap() {
-    const kafa = {x: yilan[0].x + dx, y: yilan[0].y + dy};
+    const canvas = document.getElementById('oyunAlani');
+    const ctx = canvas.getContext('2d');
+    const kareBoyutu = 20;
     const karoSayisi = canvas.width / kareBoyutu;
-    if (kafa.x < 0) kafa.x = karoSayisi - 1; if (kafa.x >= karoSayisi) kafa.x = 0;
-    if (kafa.y < 0) kafa.y = karoSayisi - 1; if (kafa.y >= karoSayisi) kafa.y = 0;
-    for (let i = 0; i < yilan.length; i++) { if (kafa.x === yilan[i].x && kafa.y === yilan[i].y) { oyunBitti(); return; } }
-    yilan.unshift(kafa);
-    if (kafa.x === yem.x && kafa.y === yem.y) {
-      skor++; skorText.innerText = skor; rastgeleYem();
-      if(skor % 5 === 0) { hiz++; clearInterval(oyunDongusu); oyunDongusu = setInterval(cizimYap, 1000 / hiz); }
-    } else { yilan.pop(); }
 
-    ctx.fillStyle = 'black'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-    yilan.forEach((parca, index) => {
-      ctx.fillStyle = index === 0 ? '#00ff00' : '#008f00';
-      ctx.shadowBlur = 15; ctx.shadowColor = "#00ff00";
-      ctx.fillRect(parca.x * kareBoyutu, parca.y * kareBoyutu, kareBoyutu - 2, kareBoyutu - 2);
-      ctx.shadowBlur = 0;
+    let yilan, yem, engeller, dx, dy, skor, hiz, oyunDongusu;
+    let anaRenk, ikincilRenk, hayaletModu = false, hayaletSure = 0;
+    let powerUp = null;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function sesCal(f, t, s) {
+        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+        o.type = t; o.frequency.setValueAtTime(f, audioCtx.currentTime);
+        g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + s);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + s);
+    }
+
+    let rekor = localStorage.getItem('neonRekor') || 0;
+    document.getElementById('rekor').innerText = rekor;
+    document.getElementById('rekorGosterge').innerText = "EN YÜKSEK SKOR: " + rekor;
+
+    function oyunuBaslat(renk, koyu) {
+        anaRenk = renk; ikincilRenk = koyu;
+        yilan = [{x: 15, y: 15}, {x: 14, y: 15}]; dx = 1; dy = 0; skor = 0; hiz = 10;
+        engeller = []; powerUp = null; hayaletModu = false;
+        document.getElementById('baslangicEkrani').style.display = 'none';
+        rastgeleYem();
+        baslatDongu();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function baslatDongu() {
+        if(oyunDongusu) clearInterval(oyunDongusu);
+        oyunDongusu = setInterval(cizimYap, 1000 / hiz);
+    }
+
+    function rastgeleYem() {
+        let renkler = ['#ff0055']; // Skor < 5
+        if (skor >= 5 && skor < 15) renkler = ['#ff0055', '#ffa500'];
+        else if (skor >= 15) renkler = ['#ff0055', '#ffa500', '#00ffff', '#ff00ff', '#ffff00', '#ffffff'];
+
+        yem = {
+            x: Math.floor(Math.random() * karoSayisi),
+            y: Math.floor(Math.random() * karoSayisi),
+            renk: renkler[Math.floor(Math.random() * renkler.length)]
+        };
+
+        if (!powerUp && Math.random() > 0.92) {
+            powerUp = { x: Math.floor(Math.random() * karoSayisi), y: Math.floor(Math.random() * karoSayisi) };
+        }
+    }
+
+    function drawStar(cx, cy, spikes, outerRadius, innerRadius) {
+        let rot = Math.PI / 2 * 3; let x = cx; let y = cy; let step = Math.PI / spikes;
+        ctx.beginPath(); ctx.moveTo(cx, cy - outerRadius);
+        for (let i = 0; i < spikes; i++) {
+            x = cx + Math.cos(rot) * outerRadius; y = cy + Math.sin(rot) * outerRadius;
+            ctx.lineTo(x, y); rot += step;
+            x = cx + Math.cos(rot) * innerRadius; y = cy + Math.sin(rot) * innerRadius;
+            ctx.lineTo(x, y); rot += step;
+        }
+        ctx.lineTo(cx, cy - outerRadius); ctx.closePath(); ctx.fill();
+    }
+
+    function cizimYap() {
+        const kafa = {x: yilan[0].x + dx, y: yilan[0].y + dy};
+
+        // Duvarlar
+        if (kafa.x < 0) kafa.x = karoSayisi - 1; if (kafa.x >= karoSayisi) kafa.x = 0;
+        if (kafa.y < 0) kafa.y = karoSayisi - 1; if (kafa.y >= karoSayisi) kafa.y = 0;
+
+        // Çarpışma: Kuyruk ve Engeller
+        if (!hayaletModu) {
+            for (let p of yilan) if (kafa.x === p.x && kafa.y === p.y) return oyunBitti();
+            for (let e of engeller) if (kafa.x === e.x && kafa.y === e.y) return oyunBitti();
+        }
+
+        yilan.unshift(kafa);
+
+        // Yem Yeme
+        if (kafa.x === yem.x && kafa.y === yem.y) {
+            skor++;
+            document.getElementById('skor').innerText = skor;
+            sesCal(500 + (skor * 10), 'sine', 0.1);
+            rastgeleYem();
+
+            // Hızlanma
+            hiz = 10 + Math.floor(skor / 4);
+            baslatDongu();
+
+            // Engel Ekleme (Skor 20'den sonra)
+            if (skor >= 20 && engeller.length < 15) {
+                engeller.push({x: Math.floor(Math.random() * karoSayisi), y: Math.floor(Math.random() * karoSayisi)});
+            }
+        } else {
+            yilan.pop();
+        }
+
+        // Power-up Yeme
+        if (powerUp && kafa.x === powerUp.x && kafa.y === powerUp.y) {
+            hayaletModu = true; hayaletSure = 100; powerUp = null;
+            sesCal(1000, 'square', 0.3);
+        }
+
+        if (hayaletSure > 0) {
+            hayaletSure--;
+            document.getElementById('hayaletBar').style.width = hayaletSure + "%";
+            if (hayaletSure <= 0) hayaletModu = false;
+        }
+
+        // ÇİZİM BAŞLAT
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Engeller
+        ctx.fillStyle = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 15; ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        engeller.forEach(e => ctx.fillRect(e.x * kareBoyutu + 2, e.y * kareBoyutu + 2, kareBoyutu - 4, kareBoyutu - 4));
+
+        // Yılan
+        yilan.forEach((p, i) => {
+            ctx.fillStyle = hayaletModu ? (i % 2 === 0 ? '#fff' : '#ff00ff') : (i === 0 ? anaRenk : ikincilRenk);
+            ctx.shadowBlur = i === 0 ? 20 : 5; ctx.shadowColor = ctx.fillStyle;
+            ctx.fillRect(p.x * kareBoyutu, p.y * kareBoyutu, kareBoyutu - 1, kareBoyutu - 1);
+        });
+
+        // Yem
+        ctx.fillStyle = yem.renk; ctx.shadowBlur = 20; ctx.shadowColor = yem.renk;
+        ctx.beginPath(); ctx.arc(yem.x * kareBoyutu + 10, yem.y * kareBoyutu + 10, 8, 0, Math.PI * 2); ctx.fill();
+
+        // Yıldız (Power-up)
+        if (powerUp) {
+            ctx.fillStyle = '#ff00ff'; ctx.shadowBlur = 30; ctx.shadowColor = '#ff00ff';
+            drawStar(powerUp.x * kareBoyutu + 10, powerUp.y * kareBoyutu + 10, 5, 10, 4);
+        }
+        ctx.shadowBlur = 0;
+    }
+
+    function oyunBitti() {
+        clearInterval(oyunDongusu);
+        sesCal(100, 'sawtooth', 0.6);
+        if (skor > rekor) localStorage.setItem('neonRekor', skor);
+        document.getElementById('sonSkor').innerText = skor;
+        document.getElementById('bitisEkrani').style.display = 'flex';
+    }
+
+    document.addEventListener('keydown', e => {
+        const K = e.keyCode;
+        if (K === 37 && dx !== 1) { dx = -1; dy = 0; }
+        else if (K === 38 && dy !== 1) { dx = 0; dy = -1; }
+        else if (K === 39 && dx !== -1) { dx = 1; dy = 0; }
+        else if (K === 40 && dy !== -1) { dx = 0; dy = 1; }
     });
-    ctx.fillStyle = '#ff0055'; ctx.shadowBlur = 20; ctx.shadowColor = "#ff0055";
-    ctx.beginPath(); ctx.arc(yem.x * kareBoyutu + kareBoyutu/2, yem.y * kareBoyutu + kareBoyutu/2, kareBoyutu/2 - 2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
-  }
-
-  function rastgeleYem() {
-    const karoSayisi = canvas.width / kareBoyutu;
-    yem = { x: Math.floor(Math.random() * karoSayisi), y: Math.floor(Math.random() * karoSayisi) };
-  }
-  function oyunBitti() { clearInterval(oyunDongusu); sonSkorText.innerText = skor; bitisEkrani.style.display = 'block'; }
-
-  document.addEventListener('keydown', changeDirection);
-  function changeDirection(event) {
-    const L=37, R=39, U=38, D=40;
-    if (event.keyCode === L && dx !== 1) { dx = -1; dy = 0; }
-    if (event.keyCode === U && dy !== 1) { dx = 0; dy = -1; }
-    if (event.keyCode === R && dx !== -1) { dx = 1; dy = 0; }
-    if (event.keyCode === D && dy !== -1) { dx = 0; dy = 1; }
-  }
-  let tX = 0; let tY = 0;
-  document.addEventListener('touchstart', e => { tX = e.changedTouches[0].screenX; tY = e.changedTouches[0].screenY; }, false);
-  document.addEventListener('touchend', e => {
-    let eX = e.changedTouches[0].screenX; let eY = e.changedTouches[0].screenY;
-    let xD = eX - tX; let yD = eY - tY;
-    if (Math.abs(xD) > Math.abs(yD)) { if (xD > 0 && dx !== -1) { dx = 1; dy = 0; } else if (xD < 0 && dx !== 1) { dx = -1; dy = 0; } }
-    else { if (yD > 0 && dy !== -1) { dx = 0; dy = 1; } else if (yD < 0 && dy !== 1) { dx = 0; dy = -1; } }
-  }, false);
-  oyunuBaslat();
 </script>
 </body>
 </html>
