@@ -516,7 +516,7 @@
         ctx.drawImage(images.star, s.x - cameraX, s.y, s.w, s.h);
         ctx.shadowBlur = 0;
         if (preciseCollide(hero, s, 0.1)) {
-          s.collected = true; score += (s.risky ? 30 : 10);
+          s.collected = true; score += 10;
           document.getElementById('score-val').innerText = score;
           playSound('sndStar'); shakeTime = 5;
         }
